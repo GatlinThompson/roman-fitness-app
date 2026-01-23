@@ -6,7 +6,7 @@ export default function HomeScreen() {
     <ContainerView>
       <ScrollView>
         <Text style={{ fontSize: 20, fontWeight: "bold", color: "#dedbdb" }}>
-          Workout Screen
+          Workout Sscreen
         </Text>
       </ScrollView>
     </ContainerView>
