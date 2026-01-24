@@ -1,6 +1,5 @@
+import Workout from "@/components/features/workout/workout";
 import ContainerView from "@/components/layout/container-view";
-import { supabase } from "@/lib/supabase/client";
-import { useEffect } from "react";
 import { ScrollView, StyleSheet, Text } from "react-native";
 
 const getTodayString = () => {
@@ -11,33 +10,13 @@ const getTodayString = () => {
 };
 
 export default function HomeScreen() {
-  const TestSupabase = async () => {
-    const todayStr = getTodayString();
-    const { data, error } = await supabase
-      .from("workouts")
-      .select("*, workout_lifts(sequence, lift(*, superset(*)))")
-      .eq("workout_date", todayStr)
-      .order("sequence", {
-        foreignTable: "workout_lifts",
-        ascending: true,
-      });
-    if (error) {
-      console.error("Error fetching workouts:", error);
-    } else {
-      console.log("Fetched workouts:", data);
-    }
-  };
-  useEffect(() => {
-    console.warn("Workout Screen Mounted");
-    TestSupabase();
-  }, []);
-
   return (
     <ContainerView>
       <ScrollView>
         <Text style={{ fontSize: 20, fontWeight: "bold", color: "#dedbdb" }}>
           Workout Screen
         </Text>
+        <Workout />
       </ScrollView>
     </ContainerView>
   );
