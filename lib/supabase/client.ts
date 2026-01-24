@@ -1,5 +1,5 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { createClient, processLock } from "@supabase/supabase-js";
+import { createClient } from "@supabase/supabase-js";
 import { Platform } from "react-native";
 import "react-native-url-polyfill/auto";
 
@@ -16,7 +16,12 @@ export const supabase = createClient(
       autoRefreshToken: true,
       persistSession: !isServer,
       detectSessionInUrl: Platform.OS === "web",
-      lock: processLock,
+      // Use navigator lock for web, no lock for React Native to prevent issues
+      ...(Platform.OS === "web" &&
+      typeof navigator !== "undefined" &&
+      navigator.locks
+        ? {}
+        : { lock: undefined }),
     },
   },
 );
