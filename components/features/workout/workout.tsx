@@ -1,9 +1,8 @@
 import Divider from "@/components/ui/divider";
 import GlassContainer from "@/components/ui/glass-container";
 import Spinner from "@/components/ui/spinner";
-import { supabase } from "@/lib/supabase/client";
+import { useRealtimeWorkout } from "@/hooks/use-real-time-workout";
 import { color } from "@/styles/color";
-import { useCallback, useEffect, useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import type { Lift } from "./lift_row";
 import LiftRow from "./lift_row";
@@ -27,31 +26,7 @@ export const isSuperSet = (lift: Lift | SuperSet): lift is SuperSet => {
 };
 
 export default function Workout() {
-  const [workout, setWorkout] = useState<WorkoutLift[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
-
-  const GetWorkout = useCallback(async () => {
-    const todayStr = getTodayString();
-    const { data, error } = await supabase
-      .from("workouts")
-      .select("*, workout_lifts(sequence, lift(*, superset(*)))")
-      .eq("workout_date", todayStr)
-      .order("sequence", {
-        foreignTable: "workout_lifts",
-        ascending: true,
-      });
-    if (error) {
-      console.error("Error fetching workouts:", error);
-    } else {
-      console.log("Fetched workouts:", data);
-      setWorkout(data[0]?.workout_lifts || []);
-    }
-    setLoading(false);
-  }, []);
-
-  useEffect(() => {
-    GetWorkout();
-  }, [GetWorkout]);
+  const { workout, loading } = useRealtimeWorkout();
 
   if (loading) {
     return (
@@ -73,6 +48,30 @@ export default function Workout() {
           }}
         >
           Loading...
+        </Text>
+      </View>
+    );
+  }
+
+  if (workout.length === 0) {
+    return (
+      <View
+        style={{
+          flex: 1,
+          alignItems: "center",
+          minHeight: "100%",
+          justifyContent: "center",
+        }}
+      >
+        <Text
+          style={{
+            fontSize: 20,
+            fontWeight: "500",
+            color: color.darkForeground.color,
+            textAlign: "center",
+          }}
+        >
+          No workout scheduled for today.
         </Text>
       </View>
     );

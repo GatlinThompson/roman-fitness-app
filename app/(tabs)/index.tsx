@@ -1,6 +1,6 @@
 import Workout from "@/components/features/workout/workout";
 import ContainerView from "@/components/layout/container-view";
-import { ScrollView, StyleSheet, Text } from "react-native";
+import { ScrollView, StyleSheet } from "react-native";
 
 const getTodayString = () => {
   const today = new Date();
@@ -13,9 +13,6 @@ export default function HomeScreen() {
   return (
     <ContainerView>
       <ScrollView>
-        <Text style={{ fontSize: 20, fontWeight: "bold", color: "#dedbdb" }}>
-          Workout Screen
-        </Text>
         <Workout />
       </ScrollView>
     </ContainerView>
