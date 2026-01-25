@@ -16,4 +16,11 @@ export const color = StyleSheet.create({
   muted: {
     color: "#4b4b4b",
   },
+  darkBackground: {
+    color: "#1c1c1c33",
+    borderColor: "rgba(18, 18, 18, 1)",
+    borderWidth: 1,
+    borderBottomColor: "rgba(37, 36, 36, 1)",
+    backdropFilter: "blur(10px)",
+  },
 });
