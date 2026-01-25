@@ -1,6 +1,10 @@
+import Divider from "@/components/ui/divider";
+import GlassContainer from "@/components/ui/glass-container";
+import Spinner from "@/components/ui/spinner";
 import { supabase } from "@/lib/supabase/client";
+import { color } from "@/styles/color";
 import { useCallback, useEffect, useState } from "react";
-import { StyleSheet, View } from "react-native";
+import { StyleSheet, Text, View } from "react-native";
 import type { Lift } from "./lift_row";
 import LiftRow from "./lift_row";
 import type { SuperSet } from "./super_set_row";
@@ -24,6 +28,7 @@ export const isSuperSet = (lift: Lift | SuperSet): lift is SuperSet => {
 
 export default function Workout() {
   const [workout, setWorkout] = useState<WorkoutLift[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
 
   const GetWorkout = useCallback(async () => {
     const todayStr = getTodayString();
@@ -41,63 +46,75 @@ export default function Workout() {
       console.log("Fetched workouts:", data);
       setWorkout(data[0]?.workout_lifts || []);
     }
+    setLoading(false);
   }, []);
 
   useEffect(() => {
     GetWorkout();
   }, [GetWorkout]);
 
+  if (loading) {
+    return (
+      <View
+        style={{
+          flex: 1,
+          justifyContent: "center",
+          alignItems: "center",
+          minHeight: "100%",
+          gap: 8,
+        }}
+      >
+        <Spinner />
+        <Text
+          style={{
+            fontSize: 18,
+            fontWeight: "500",
+            color: color.darkForeground.color,
+          }}
+        >
+          Loading...
+        </Text>
+      </View>
+    );
+  }
+
   return (
-    <View style={styles.container}>
-      {workout.map((lift: any, index: number) => {
-        if (isSuperSet(lift.lift)) {
-          return (
-            <SuperSetRow
-              key={lift.id}
-              superset={lift.lift.superset}
-              lift={lift.lift}
-              last={index === workout.length - 1}
-            />
-          );
-        } else {
-          return (
-            <LiftRow
-              key={lift.id}
-              lift={lift.lift}
-              last={index === workout.length - 1}
-            />
-          );
-        }
-      })}
-    </View>
+    <GlassContainer>
+      <View style={styles.container}>
+        {workout.map((lift: any, index: number) => {
+          if (isSuperSet(lift.lift)) {
+            return (
+              <View key={index}>
+                <SuperSetRow
+                  superset={lift.lift.superset}
+                  lift={lift.lift}
+                  last={index === workout.length - 1}
+                />
+                {index !== workout.length - 1 && (
+                  <Divider style={{ marginVertical: 8 }} />
+                )}
+              </View>
+            );
+          } else {
+            return (
+              <View key={index}>
+                <LiftRow lift={lift.lift} last={index === workout.length - 1} />
+                {index !== workout.length - 1 && (
+                  <Divider style={{ marginVertical: 4 }} />
+                )}
+              </View>
+            );
+          }
+        })}
+      </View>
+    </GlassContainer>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    padding: 16,
-  },
-  emptyText: {
-    color: "#888",
-    fontSize: 16,
-    textAlign: "center",
-  },
-  workoutItem: {
-    padding: 12,
-    marginBottom: 8,
-    backgroundColor: "#1a1a1a",
-    borderRadius: 8,
-    flexDirection: "row",
-    alignItems: "center",
+    flex: 1,
     gap: 12,
-  },
-  sequence: {
-    color: "#dedbdb",
-    fontSize: 14,
-    fontWeight: "bold",
-  },
-  liftName: {
-    color: "#dedbdb",
-    fontSize: 16,
+    paddingBottom: 16,
   },
 });

@@ -1,5 +1,6 @@
 import React from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { View } from "react-native";
+import LiftComponent from "./lift_component";
 
 export type Lift = {
   id: number;
@@ -10,14 +11,13 @@ export type Lift = {
 
 export default function LiftRow({ lift, last }: { lift: Lift; last: boolean }) {
   return (
-    <View>
-      <Text style={styles.text}>{lift.exercise}</Text>
+    <View
+      style={{
+        paddingHorizontal: 12,
+        paddingVertical: 8,
+      }}
+    >
+      <LiftComponent lift={lift} />
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  text: {
-    color: "#fff",
-  },
-});
