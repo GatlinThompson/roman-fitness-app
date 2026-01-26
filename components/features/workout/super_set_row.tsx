@@ -19,7 +19,6 @@ export default function SuperSetRow({
   superset: Lift;
   last: boolean;
 }) {
-  console.log("Rendering superset:", { superset });
   return (
     <View style={styles.container}>
       <Text style={styles.supersetBadge}>SS</Text>

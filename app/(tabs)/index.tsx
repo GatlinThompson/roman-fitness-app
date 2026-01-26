@@ -1,3 +1,4 @@
+import PhaseHeader from "@/components/features/phases/phase_header";
 import Workout from "@/components/features/workout/workout";
 import ContainerView from "@/components/layout/container-view";
 import { ScrollView, StyleSheet } from "react-native";
@@ -12,7 +13,8 @@ const getTodayString = () => {
 export default function HomeScreen() {
   return (
     <ContainerView>
-      <ScrollView>
+      <ScrollView style={{ flex: 1 }} contentContainerStyle={{ gap: 20 }}>
+        <PhaseHeader />
         <Workout />
       </ScrollView>
     </ContainerView>

@@ -1,19 +1,13 @@
 import { Lift } from "@/components/features/workout/lift_row";
 import { SuperSet } from "@/components/features/workout/super_set_row";
 import { supabase } from "@/lib/supabase/client";
+import getTodayString from "@/utils/get-today";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 type UseRealtimeWorkoutReturn = {
   workout: (Lift | SuperSet)[];
   workoutId: string | number | undefined;
   loading: boolean;
-};
-
-const getTodayString = () => {
-  const today = new Date();
-  return `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}-${String(
-    today.getDate(),
-  ).padStart(2, "0")}`;
 };
 
 export function useRealtimeWorkout(): UseRealtimeWorkoutReturn {
@@ -30,7 +24,6 @@ export function useRealtimeWorkout(): UseRealtimeWorkoutReturn {
 
   // Memoize the update function to prevent recreation on every render
   const updateWorkoutData = useCallback(async () => {
-    console.log("updateWorkoutData called");
     if (isFetchingRef.current) {
       return;
     }
@@ -62,9 +55,7 @@ export function useRealtimeWorkout(): UseRealtimeWorkoutReturn {
             ascending: true,
           });
 
-        console.warn("Fetched workouts:", data);
         if (error) {
-          console.error("Error fetching workouts:", error);
           setLoading(false);
           isFetchingRef.current = false;
           return;
