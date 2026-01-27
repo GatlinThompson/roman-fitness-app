@@ -1,22 +1,46 @@
+import CalendarView from "@/components/features/calendar/calendar-view";
+import WorkoutList from "@/components/features/calendar/workout-list";
 import ContainerView from "@/components/layout/container-view";
-import { useEffect } from "react";
-import { StyleSheet } from "react-native";
-
-import { ScrollView, Text } from "react-native";
+import { useWorkoutByDate } from "@/hooks/use-workout-by-date";
+import { useState } from "react";
+import { StyleSheet, View } from "react-native";
 
 export default function TabTwoScreen() {
-  useEffect(() => {
-    console.warn("Dashboard Screen Mounted");
-  }, []);
+  const [selectedDate, setSelectedDate] = useState(new Date());
+  const { workout, loading } = useWorkoutByDate(selectedDate);
+
   return (
     <ContainerView>
-      <ScrollView>
-        <Text style={{ fontSize: 20, fontWeight: "bold", color: "#dedbdb" }}>
-          Dashbosrd Screen
-        </Text>
-      </ScrollView>
+      <View style={styles.container}>
+        {/* Calendar - Top Half */}
+        <View style={styles.calendarSection}>
+          <CalendarView
+            selectedDate={selectedDate}
+            onDateSelect={setSelectedDate}
+          />
+        </View>
+
+        {/* Workout List - Bottom Half */}
+        <View style={styles.workoutSection}>
+          <WorkoutList
+            workout={workout}
+            loading={loading}
+            selectedDate={selectedDate}
+          />
+        </View>
+      </View>
     </ContainerView>
   );
 }
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  calendarSection: {
+    paddingBottom: 12,
+  },
+  workoutSection: {
+    flex: 1,
+  },
+});

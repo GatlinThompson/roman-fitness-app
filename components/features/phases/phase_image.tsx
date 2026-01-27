@@ -23,8 +23,8 @@ export default function PhaseImage() {
         style={{
           width: image.width * 0.75,
           height: image.height * 0.75,
-          resizeMode: "contain",
         }}
+        contentFit="contain"
       />
     </View>
   );

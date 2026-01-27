@@ -78,7 +78,7 @@ export default function Workout() {
   }
 
   return (
-    <GlassContainer>
+    <GlassContainer style={{ marginBottom: 32 }}>
       <View style={styles.container}>
         {workout.map((lift: any, index: number) => {
           if (isSuperSet(lift.lift)) {

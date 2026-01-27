@@ -40,7 +40,5 @@ export function useGetPhase() {
     fetchPhase();
   }, []);
 
-  console.log(phase);
-
   return phase;
 }

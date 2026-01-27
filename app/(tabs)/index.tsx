@@ -13,7 +13,11 @@ const getTodayString = () => {
 export default function HomeScreen() {
   return (
     <ContainerView>
-      <ScrollView style={{ flex: 1 }} contentContainerStyle={{ gap: 20 }}>
+      <ScrollView
+        style={{ flex: 1 }}
+        contentContainerStyle={{ gap: 20 }}
+        stickyHeaderIndices={[0]}
+      >
         <PhaseHeader />
         <Workout />
       </ScrollView>

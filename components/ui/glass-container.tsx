@@ -1,13 +1,15 @@
 import { color } from "@/styles/color";
 import React from "react";
-import { StyleSheet, View } from "react-native";
+import { StyleSheet, View, ViewStyle } from "react-native";
 
 export default function GlassContainer({
   children,
+  style,
 }: {
   children: React.ReactNode;
+  style?: ViewStyle;
 }) {
-  return <View style={styles.glassContainer}>{children}</View>;
+  return <View style={{ ...styles.glassContainer, ...style }}>{children}</View>;
 }
 
 const styles = StyleSheet.create({

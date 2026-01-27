@@ -30,4 +30,7 @@ export const color = StyleSheet.create({
     borderWidth: 1,
     borderColor: "rgb(18, 18, 18",
   },
+  blackFillBackground: {
+    backgroundColor: "rgba(0, 0, 0, 1)",
+  },
 });
