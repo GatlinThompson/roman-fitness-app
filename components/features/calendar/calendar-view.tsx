@@ -30,7 +30,9 @@ export default function CalendarView() {
 
     // Select today if it's in the new month, otherwise select first day
     if (isTodayInNewMonth) {
-      setSelectedDate(new Date(today.getFullYear(), today.getMonth(), today.getDate()));
+      setSelectedDate(
+        new Date(today.getFullYear(), today.getMonth(), today.getDate()),
+      );
     } else {
       setSelectedDate(newMonth);
     }
