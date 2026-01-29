@@ -8,7 +8,7 @@ import {
 } from "react-native-reanimated";
 
 const SCREEN_WIDTH = Dimensions.get("window").width;
-const CALENDAR_WIDTH = SCREEN_WIDTH - 32;
+const CALENDAR_WIDTH = SCREEN_WIDTH;
 
 export function useCalendarSwipe(
   currentMonth: Date,

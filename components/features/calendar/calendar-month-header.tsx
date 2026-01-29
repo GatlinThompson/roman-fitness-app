@@ -1,5 +1,5 @@
 import { color } from "@/styles/color";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { StyleSheet, Text, View } from "react-native";
 
 const MONTHS = [
   "January",
@@ -29,15 +29,9 @@ export default function CalendarMonthHeader({
 }: CalendarMonthHeaderProps) {
   return (
     <View style={styles.header}>
-      <TouchableOpacity onPress={goToPreviousMonth} style={styles.navButton}>
-        <Text style={styles.navButtonText}>‹</Text>
-      </TouchableOpacity>
       <Text style={styles.monthText}>
         {MONTHS[currentMonth.getMonth()]} {currentMonth.getFullYear()}
       </Text>
-      <TouchableOpacity onPress={goToNextMonth} style={styles.navButton}>
-        <Text style={styles.navButtonText}>›</Text>
-      </TouchableOpacity>
     </View>
   );
 }
@@ -48,10 +42,10 @@ const styles = StyleSheet.create({
   },
   header: {
     flexDirection: "row",
-    justifyContent: "space-between",
+    justifyContent: "center",
     alignItems: "center",
-    marginBottom: 16,
-    marginTop: 4,
+    marginBottom: 20,
+    marginTop: 12,
   },
   navButton: {
     padding: 8,

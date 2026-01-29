@@ -40,8 +40,12 @@ export function getDaysInMonth(date: Date) {
     });
   }
 
+  // Check if we need 6 weeks (42 days) or 5 weeks (35 days)
+  // If current month days extend beyond 35 cells, fill to 42
+  const needsSixWeeks = days.length > 35;
+  const totalCells = needsSixWeeks ? 42 : 35;
+
   // Next month days
-  const totalCells = 35;
   let nextMonthDay = 1;
   while (days.length < totalCells) {
     days.push({

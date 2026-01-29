@@ -21,7 +21,19 @@ export default function CalendarView() {
 
   const handleMonthChange = (newMonth: Date) => {
     setCurrentMonth(newMonth);
-    setSelectedDate(newMonth);
+
+    // Check if today is in the new month
+    const today = new Date();
+    const isTodayInNewMonth =
+      today.getMonth() === newMonth.getMonth() &&
+      today.getFullYear() === newMonth.getFullYear();
+
+    // Select today if it's in the new month, otherwise select first day
+    if (isTodayInNewMonth) {
+      setSelectedDate(new Date(today.getFullYear(), today.getMonth(), today.getDate()));
+    } else {
+      setSelectedDate(newMonth);
+    }
   };
 
   const { panResponder, animatedStyle, handlePrevMonth, handleNextMonth } =
