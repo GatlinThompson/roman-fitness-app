@@ -3,7 +3,16 @@ import { StyleSheet, Text, View } from "react-native";
 
 import { useSelector } from "react-redux";
 
-const liftDays = ["Chest", "Leg", "Arms", "Chest", "Leg", "Shoulder", "Rest"];
+const liftDays = [
+  "Rest",
+  "Chest",
+  "Leg",
+  "Arms",
+  "Chest",
+  "Leg",
+  "Shoulder",
+  "Rest",
+];
 
 export default function SelectedDate() {
   const selectedDate = useSelector((state: any) => state.calendar.selectedDate);
@@ -40,6 +49,7 @@ export default function SelectedDate() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    marginTop: 0,
   },
   text: {
     fontSize: 20,

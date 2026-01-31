@@ -41,7 +41,6 @@ export default function CalendarDay({ day }: CalendarDayProps) {
         ...styles.container,
         ...(isSelected() ? styles.isSelected : {}),
         ...(isToday ? styles.isToday : {}),
-        ...(hasWorkout() ? styles.hasWorkout : {}),
       }}
       onPress={() => {
         // Format date as YYYY-MM-DD
