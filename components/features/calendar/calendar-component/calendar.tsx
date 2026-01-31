@@ -23,5 +23,6 @@ export default function Calendar({ month, days, events }: CalendarProps) {
 const styles = StyleSheet.create({
   container: {
     width: "100%",
+    flex: 1,
   },
 });

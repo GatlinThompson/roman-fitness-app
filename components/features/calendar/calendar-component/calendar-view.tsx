@@ -3,16 +3,26 @@ import {
   Animated,
   Dimensions,
   PanResponder,
+  Platform,
   StyleSheet,
+  UIManager,
   View,
 } from "react-native";
 
 import { useWorkoutDates } from "@/hooks/use-workout-dates";
-import { useRef } from "react";
+import { useLayoutEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Calendar from "./calendar";
 import CalendarMonth from "./calendar-month";
 import CalendarWeek from "./calendar-week";
+
+// Enable LayoutAnimation on Android
+if (
+  Platform.OS === "android" &&
+  UIManager.setLayoutAnimationEnabledExperimental
+) {
+  UIManager.setLayoutAnimationEnabledExperimental(true);
+}
 
 const SCREEN_WIDTH = Dimensions.get("window").width;
 const SWIPE_THRESHOLD = SCREEN_WIDTH * 0.25; // 25% of screen width to trigger swipe
@@ -27,7 +37,34 @@ export default function CalendarNew() {
   useWorkoutDates();
 
   const pan = useRef(new Animated.Value(0)).current;
+  const opacity = useRef(new Animated.Value(1)).current;
   const isAnimating = useRef(false);
+  const shouldResetPan = useRef(false);
+
+  // Reset pan SYNCHRONOUSLY after DOM update but before paint
+  useLayoutEffect(() => {
+    if (shouldResetPan.current) {
+      // On Android, briefly hide content during reset to mask the flash
+      if (Platform.OS === "android") {
+        opacity.setValue(0);
+      }
+
+      pan.setValue(0);
+      shouldResetPan.current = false;
+      isAnimating.current = false;
+
+      // Fade back in immediately
+      if (Platform.OS === "android") {
+        requestAnimationFrame(() => {
+          Animated.timing(opacity, {
+            toValue: 1,
+            duration: 0,
+            useNativeDriver: true,
+          }).start();
+        });
+      }
+    }
+  }, [currentMonth, pan, opacity]);
 
   const panResponder = useRef(
     PanResponder.create({
@@ -49,7 +86,7 @@ export default function CalendarNew() {
 
         const { dx, vx } = gestureState;
 
-        // Swipe left (next month)
+        // Swipe left
         if (dx < -SWIPE_THRESHOLD || vx < -0.5) {
           isAnimating.current = true;
           Animated.timing(pan, {
@@ -57,12 +94,11 @@ export default function CalendarNew() {
             duration: 300,
             useNativeDriver: true,
           }).start(() => {
+            shouldResetPan.current = true;
             dispatch(setNextMonth());
-            pan.setValue(0);
-            isAnimating.current = false;
           });
         }
-        // Swipe right (previous month)
+        // Swipe right
         else if (dx > SWIPE_THRESHOLD || vx > 0.5) {
           isAnimating.current = true;
           Animated.timing(pan, {
@@ -70,9 +106,8 @@ export default function CalendarNew() {
             duration: 300,
             useNativeDriver: true,
           }).start(() => {
+            shouldResetPan.current = true;
             dispatch(setPrevMonth());
-            pan.setValue(0);
-            isAnimating.current = false;
           });
         } else {
           Animated.spring(pan, {
@@ -102,6 +137,7 @@ export default function CalendarNew() {
             styles.carouselContainer,
             {
               transform: [{ translateX }],
+              opacity: opacity,
             },
           ]}
         >

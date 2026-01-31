@@ -48,8 +48,8 @@ export default function SelectedDate() {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
     marginTop: 0,
+    marginBottom: 8,
   },
   text: {
     fontSize: 20,

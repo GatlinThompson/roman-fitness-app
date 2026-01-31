@@ -15,7 +15,6 @@ export default function WorkoutList() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-
     backgroundColor: color.blackBackground.backgroundColor,
     height: "100%",
     marginHorizontal: -8,

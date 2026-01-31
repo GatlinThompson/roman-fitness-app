@@ -10,7 +10,14 @@ type UseRealtimeWorkoutReturn = {
   loading: boolean;
 };
 
-export function useRealtimeWorkout(): UseRealtimeWorkoutReturn {
+type useRealtimeWorkoutProps = {
+  workout_date?: Date | string | null;
+};
+
+export function useRealtimeWorkout({
+  workout_date,
+}: useRealtimeWorkoutProps): UseRealtimeWorkoutReturn {
+  console.warn("workout_date:", workout_date);
   const [workout, setWorkout] = useState<(Lift | SuperSet)[]>([]);
   const [workoutId, setWorkoutId] = useState<string | number | undefined>(
     undefined,
@@ -43,8 +50,17 @@ export function useRealtimeWorkout(): UseRealtimeWorkoutReturn {
       }
 
       try {
-        // Get today's date in YYYY-MM-DD format (client timezone)
-        const todayStr = getTodayString();
+        let todayStr: string;
+        if (!workout_date) {
+          todayStr = getTodayString();
+        } else {
+          todayStr =
+            typeof workout_date === "string"
+              ? workout_date
+              : workout_date.toISOString().split("T")[0];
+        }
+
+        console.warn("Fetching workout for date:", todayStr);
 
         const { data, error } = await supabase
           .from("workouts")
@@ -87,7 +103,7 @@ export function useRealtimeWorkout(): UseRealtimeWorkoutReturn {
         isFetchingRef.current = false;
       }
     }, 300);
-  }, [supabase]);
+  }, [supabase, workout_date]);
 
   // Initial data fetch on mount
   useEffect(() => {
@@ -126,7 +142,6 @@ export function useRealtimeWorkout(): UseRealtimeWorkoutReturn {
           event: "*",
           schema: "public",
           table: "workouts",
-          filter: `id=eq.${workoutId}`,
         },
         () => {
           updateWorkoutData();

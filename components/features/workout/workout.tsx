@@ -26,7 +26,9 @@ export const isSuperSet = (lift: Lift | SuperSet): lift is SuperSet => {
 };
 
 export default function Workout() {
-  const { workout, loading } = useRealtimeWorkout();
+  const { workout, loading } = useRealtimeWorkout({
+    workout_date: getTodayString(),
+  });
 
   if (loading) {
     return (

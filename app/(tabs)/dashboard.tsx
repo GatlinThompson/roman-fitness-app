@@ -22,9 +22,10 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   calendarSection: {
-    paddingBottom: 12,
+    flex: 1,
   },
   workoutSection: {
     flex: 1,
+    marginTop: -40,
   },
 });
