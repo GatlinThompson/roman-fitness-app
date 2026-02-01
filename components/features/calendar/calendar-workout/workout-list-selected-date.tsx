@@ -1,8 +1,6 @@
 import { color } from "@/styles/color";
 import { StyleSheet, Text, View } from "react-native";
 
-import { useSelector } from "react-redux";
-
 const liftDays = [
   "Rest",
   "Chest",
@@ -14,26 +12,22 @@ const liftDays = [
   "Rest",
 ];
 
-export default function SelectedDate() {
-  const selectedDate = useSelector((state: any) => state.calendar.selectedDate);
+type SelectedDateProps = {
+  date: string;
+};
 
-  const formattedDate = new Date(selectedDate + "T00:00:00").toLocaleString(
-    "default",
-    {
-      month: "long",
-      day: "numeric",
-      year: "numeric",
-    },
-  );
+export default function SelectedDate({ date }: SelectedDateProps) {
+  const formattedDate = new Date(date + "T00:00:00").toLocaleString("default", {
+    month: "long",
+    day: "numeric",
+    year: "numeric",
+  });
 
-  const weekDay = new Date(selectedDate + "T00:00:00").toLocaleString(
-    "default",
-    {
-      weekday: "long",
-    },
-  );
+  const weekDay = new Date(date + "T00:00:00").toLocaleString("default", {
+    weekday: "long",
+  });
 
-  const dayIndex = new Date(selectedDate + "T00:00:00").getDay();
+  const dayIndex = new Date(date + "T00:00:00").getDay();
   const liftDay = liftDays[dayIndex];
 
   return (

@@ -2,52 +2,55 @@ import Divider from "@/components/ui/divider";
 import Spinner from "@/components/ui/spinner";
 import { useRealtimeWorkout } from "@/hooks/use-real-time-workout";
 import { color } from "@/styles/color";
-import { ScrollView, StyleSheet, Text, View } from "react-native";
-import { useSelector } from "react-redux";
+import { useEffect, useState } from "react";
+import { StyleSheet, Text, View } from "react-native";
+import { ScrollView } from "react-native-gesture-handler";
 import LiftRow from "../../workout/lift_row";
 import SuperSetRow from "../../workout/super_set_row";
 import { isSuperSet } from "../../workout/workout";
 
-export default function CalendarWorkout() {
-  const selectedDate = useSelector((state: any) => state.calendar.selectedDate);
+type WorkoutLift = {
+  date: string;
+};
 
-  console.log("Selected Date in CalendarWorkout:", selectedDate);
-
-  const { workout, loading, workoutId } = useRealtimeWorkout({
-    workout_date: selectedDate,
+export default function CalendarWorkout({ date }: WorkoutLift) {
+  const [showLoading, setShowLoading] = useState(true);
+  const { workout, loading } = useRealtimeWorkout({
+    workout_date: date,
   });
 
-  console.log("Workout Data in CalendarWorkout:", workout);
+  useEffect(() => {
+    setShowLoading(true);
+    const timer = setTimeout(() => setShowLoading(false), 500);
+    return () => clearTimeout(timer);
+  }, [date]);
 
-  if (loading) {
+  if (showLoading || loading) {
     return (
-      <View style={styles.pesudoContainer}>
+      <View style={styles.emptyContainer}>
         <Spinner />
-        <Text
-          style={{
-            fontSize: 18,
-            fontWeight: "500",
-            color: color.darkForeground.color,
-          }}
-        >
-          Loading...
-        </Text>
+        <Text style={styles.loadingText}>Loading...</Text>
       </View>
     );
   }
 
-  if (workout.length === 0) {
+  if (!workout || workout.length === 0) {
     return (
-      <View style={styles.pesudoContainer}>
-        <Text style={styles.pesudoText}>
-          No workouts scheduled for this date.
+      <View style={styles.emptyContainer}>
+        <Text style={styles.emptyText}>
+          No workouts scheduled for this date
         </Text>
       </View>
     );
   }
 
   return (
-    <ScrollView style={styles.container}>
+    <ScrollView
+      style={styles.container}
+      scrollEnabled={true}
+      nestedScrollEnabled={true}
+      showsVerticalScrollIndicator={false}
+    >
       {workout.map((lift: any, index: number) => {
         if (isSuperSet(lift.lift)) {
           return (
@@ -76,25 +79,20 @@ export default function CalendarWorkout() {
     </ScrollView>
   );
 }
-
 const styles = StyleSheet.create({
-  container: {
+  emptyContainer: {
     flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
   },
-  pesudoText: {
+  emptyText: {
     fontSize: 20,
     fontWeight: "500",
     color: color.darkForeground.color,
   },
-  pesudoContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    gap: 8,
-  },
-  text: {
-    fontSize: 20,
+  loadingText: {
+    fontSize: 18,
     fontWeight: "500",
-    color: color.foreground.color,
+    color: color.darkForeground.color,
   },
 });

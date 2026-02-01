@@ -25,9 +25,6 @@ export async function getWorkoutDatesForMonth(
       .gte("workout_date", startDateString)
       .lte("workout_date", endDateString);
 
-    console.log("Fetching workout dates for month:", year, month);
-    console.log(data);
-
     if (error) {
       console.error("Error fetching workout dates:", error);
       return [];

@@ -40,10 +40,13 @@ export default function CalendarNew() {
   const opacity = useRef(new Animated.Value(1)).current;
   const isAnimating = useRef(false);
   const shouldResetPan = useRef(false);
+  const prevMonthRef = useRef(currentMonth);
 
   // Reset pan SYNCHRONOUSLY after DOM update but before paint
   useLayoutEffect(() => {
-    if (shouldResetPan.current) {
+    const monthChanged = prevMonthRef.current !== currentMonth;
+
+    if (shouldResetPan.current || monthChanged) {
       // On Android, briefly hide content during reset to mask the flash
       if (Platform.OS === "android") {
         opacity.setValue(0);
@@ -52,13 +55,14 @@ export default function CalendarNew() {
       pan.setValue(0);
       shouldResetPan.current = false;
       isAnimating.current = false;
+      prevMonthRef.current = currentMonth;
 
       // Fade back in immediately
       if (Platform.OS === "android") {
         requestAnimationFrame(() => {
           Animated.timing(opacity, {
             toValue: 1,
-            duration: 0,
+            duration: 100,
             useNativeDriver: true,
           }).start();
         });
