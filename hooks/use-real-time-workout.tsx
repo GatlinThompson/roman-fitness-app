@@ -12,10 +12,12 @@ type UseRealtimeWorkoutReturn = {
 
 type useRealtimeWorkoutProps = {
   workout_date?: Date | string | null;
+  loadingFunction?: boolean;
 };
 
 export function useRealtimeWorkout({
   workout_date,
+  loadingFunction = false,
 }: useRealtimeWorkoutProps): UseRealtimeWorkoutReturn {
   console.warn("workout_date:", workout_date);
   const [workout, setWorkout] = useState<(Lift | SuperSet)[]>([]);
@@ -25,6 +27,10 @@ export function useRealtimeWorkout({
   const [loading, setLoading] = useState(true);
   const isInitialLoadRef = useRef(true);
   const currentLiftIdsRef = useRef<Set<number>>(new Set());
+
+  if (loadingFunction) {
+    isInitialLoadRef.current = true;
+  }
 
   const isFetchingRef = useRef(false);
   const debounceTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);

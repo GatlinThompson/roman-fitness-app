@@ -14,18 +14,27 @@ type WorkoutLift = {
 };
 
 export default function CalendarWorkout({ date }: WorkoutLift) {
+  const [displayWorkout, setDisplayWorkout] = useState<any[] | null>(null);
   const [showLoading, setShowLoading] = useState(true);
+
   const { workout, loading } = useRealtimeWorkout({
     workout_date: date,
   });
 
   useEffect(() => {
+    setDisplayWorkout(null);
     setShowLoading(true);
     const timer = setTimeout(() => setShowLoading(false), 500);
     return () => clearTimeout(timer);
   }, [date]);
 
-  if (showLoading || loading) {
+  useEffect(() => {
+    if (!loading && workout) {
+      setDisplayWorkout(workout);
+    }
+  }, [workout, loading]);
+
+  if (showLoading || loading || !displayWorkout) {
     return (
       <View style={styles.emptyContainer}>
         <Spinner />
@@ -34,7 +43,7 @@ export default function CalendarWorkout({ date }: WorkoutLift) {
     );
   }
 
-  if (!workout || workout.length === 0) {
+  if (displayWorkout.length === 0) {
     return (
       <View style={styles.emptyContainer}>
         <Text style={styles.emptyText}>
@@ -51,16 +60,16 @@ export default function CalendarWorkout({ date }: WorkoutLift) {
       nestedScrollEnabled={true}
       showsVerticalScrollIndicator={false}
     >
-      {workout.map((lift: any, index: number) => {
+      {displayWorkout.map((lift: any, index: number) => {
         if (isSuperSet(lift.lift)) {
           return (
             <View key={index}>
               <SuperSetRow
                 superset={lift.lift.superset}
                 lift={lift.lift}
-                last={index === workout.length - 1}
+                last={index === displayWorkout.length - 1}
               />
-              {index !== workout.length - 1 && (
+              {index !== displayWorkout.length - 1 && (
                 <Divider style={{ marginVertical: 8 }} />
               )}
             </View>
@@ -68,8 +77,11 @@ export default function CalendarWorkout({ date }: WorkoutLift) {
         } else {
           return (
             <View key={index}>
-              <LiftRow lift={lift.lift} last={index === workout.length - 1} />
-              {index !== workout.length - 1 && (
+              <LiftRow
+                lift={lift.lift}
+                last={index === displayWorkout.length - 1}
+              />
+              {index !== displayWorkout.length - 1 && (
                 <Divider style={{ marginVertical: 4 }} />
               )}
             </View>
@@ -84,6 +96,9 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
+  },
+  container: {
+    flex: 1,
   },
   emptyText: {
     fontSize: 20,
