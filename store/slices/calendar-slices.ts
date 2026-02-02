@@ -8,6 +8,7 @@ interface CalendarState {
   currentMonth: string;
   prevMonth: string;
   nextMonth: string;
+  transitionMonth: string | null;
 }
 
 const getTodayString = (): string => {
@@ -56,6 +57,7 @@ const initialState: CalendarState = {
   currentMonth: getCurrentMonth(),
   prevMonth: getPreviousMonth(),
   nextMonth: getNextMonth(),
+  transitionMonth: "",
 };
 
 const calendarSlice = createSlice({
@@ -96,32 +98,18 @@ const calendarSlice = createSlice({
     setWorkoutDates: (state, action: PayloadAction<string[]>) => {
       state.workoutDates = action.payload;
     },
-    setPrevMonth: (state) => {
-      const [year, month] = state.currentMonth.split("-").map(Number);
-      const current = new Date(year, month - 1, 1);
+    setTransitionPrevMonth: (state) => {
+      state.transitionMonth = state.currentMonth;
+      state.currentMonth = state.prevMonth;
 
-      const newCurrentMonth = new Date(
-        current.getFullYear(),
-        current.getMonth() - 1,
-        1,
-      );
-      const newPrevMonth = new Date(
-        current.getFullYear(),
-        current.getMonth() - 2,
-        1,
-      );
-      const newNextMonth = current;
-
-      state.currentMonth = newCurrentMonth.toISOString().slice(0, 10);
-      state.prevMonth = newPrevMonth.toISOString().slice(0, 10);
-      state.nextMonth = newNextMonth.toISOString().slice(0, 10);
-
+      // Update selectedDate to first of new month (or today if current month)
+      const newCurrentMonth = new Date(state.currentMonth + "T00:00:00Z");
       state.selectedDate = newCurrentMonth.toISOString().slice(0, 10);
 
       const today = new Date();
       const isTodayInNewMonth =
-        today.getMonth() === newCurrentMonth.getMonth() &&
-        today.getFullYear() === newCurrentMonth.getFullYear();
+        today.getUTCMonth() === newCurrentMonth.getUTCMonth() &&
+        today.getUTCFullYear() === newCurrentMonth.getUTCFullYear();
       if (isTodayInNewMonth) {
         state.selectedDate = getTodayString();
       }
@@ -129,66 +117,92 @@ const calendarSlice = createSlice({
       state.prevDate = getPrevDateString(state.selectedDate);
       state.nextDate = getNextDateString(state.selectedDate);
     },
-    setNextMonth: (state) => {
-      const [year, month] = state.currentMonth.split("-").map(Number);
-      const current = new Date(year, month - 1, 1);
+    setTransitionNextMonth: (state) => {
+      state.transitionMonth = state.currentMonth;
+      state.currentMonth = state.nextMonth;
 
-      const newCurrentMonth = new Date(
-        current.getFullYear(),
-        current.getMonth() + 1,
-        1,
-      );
-      const newPrevMonth = current;
-      const newNextMonth = new Date(
-        current.getFullYear(),
-        current.getMonth() + 2,
-        1,
-      );
-
-      state.currentMonth = newCurrentMonth.toISOString().slice(0, 10);
-      state.prevMonth = newPrevMonth.toISOString().slice(0, 10);
-      state.nextMonth = newNextMonth.toISOString().slice(0, 10);
-
+      // Update selectedDate to first of new month (or today if current month)
+      const newCurrentMonth = new Date(state.currentMonth + "T00:00:00Z");
       state.selectedDate = newCurrentMonth.toISOString().slice(0, 10);
 
       const today = new Date();
       const isTodayInNewMonth =
-        today.getMonth() === newCurrentMonth.getMonth() &&
-        today.getFullYear() === newCurrentMonth.getFullYear();
+        today.getUTCMonth() === newCurrentMonth.getUTCMonth() &&
+        today.getUTCFullYear() === newCurrentMonth.getUTCFullYear();
       if (isTodayInNewMonth) {
         state.selectedDate = getTodayString();
       }
 
+      state.prevDate = getPrevDateString(state.selectedDate);
+      state.nextDate = getNextDateString(state.selectedDate);
+    },
+    setPrevMonth: (state) => {
+      const current = state.currentMonth;
+
+      const [year, month] = current.split("-").map(Number);
+      const newPrevMonth = new Date(year, month - 2, 1);
+      const currentMonth = new Date(year, month - 1, 1);
+      const newNextMonth = new Date(year, month, 1);
+      state.currentMonth = currentMonth.toISOString().slice(0, 10);
+      state.prevMonth = newPrevMonth.toISOString().slice(0, 10);
+      state.nextMonth = newNextMonth.toISOString().slice(0, 10);
+
+      const today = new Date();
+      const isTodayInNewMonth =
+        today.getMonth() === currentMonth.getMonth() &&
+        today.getFullYear() === currentMonth.getFullYear();
+      if (isTodayInNewMonth) {
+        state.selectedDate = getTodayString();
+      }
+      state.prevDate = getPrevDateString(state.selectedDate);
+      state.nextDate = getNextDateString(state.selectedDate);
+    },
+
+    setNextMonth: (state) => {
+      const current = state.currentMonth;
+      const [year, month] = current.split("-").map(Number);
+      const newPrevMonth = new Date(year, month - 2, 1);
+      const currentMonth = new Date(year, month - 1, 1);
+      const newNextMonth = new Date(year, month, 1);
+      state.currentMonth = currentMonth.toISOString().slice(0, 10);
+      state.prevMonth = newPrevMonth.toISOString().slice(0, 10);
+      state.nextMonth = newNextMonth.toISOString().slice(0, 10);
+
+      const today = new Date();
+      const isTodayInNewMonth =
+        today.getMonth() === currentMonth.getMonth() &&
+        today.getFullYear() === currentMonth.getFullYear();
+      if (isTodayInNewMonth) {
+        state.selectedDate = getTodayString();
+      }
       state.prevDate = getPrevDateString(state.selectedDate);
       state.nextDate = getNextDateString(state.selectedDate);
     },
     setPrevDate: (state) => {
-      const current = new Date(state.selectedDate + "T00:00:00Z");
-      const prevDay = new Date(current);
-      prevDay.setUTCDate(current.getUTCDate() - 1);
-      state.selectedDate = prevDay.toISOString().slice(0, 10);
-      state.prevDate = getPrevDateString(state.selectedDate);
-      state.nextDate = getNextDateString(state.selectedDate);
-
-      // Update month if crossing month boundary
-      if (
-        prevDay.getUTCMonth() !== current.getUTCMonth() ||
-        prevDay.getUTCFullYear() !== current.getUTCFullYear()
-      ) {
-        const newMonth = new Date(
-          Date.UTC(prevDay.getUTCFullYear(), prevDay.getUTCMonth(), 1),
-        );
-        const newPrevMonth = new Date(
-          Date.UTC(prevDay.getUTCFullYear(), prevDay.getUTCMonth() - 1, 1),
-        );
-        const newNextMonth = new Date(
-          Date.UTC(prevDay.getUTCFullYear(), prevDay.getUTCMonth() + 1, 1),
-        );
-
-        state.currentMonth = newMonth.toISOString().slice(0, 10);
-        state.prevMonth = newPrevMonth.toISOString().slice(0, 10);
-        state.nextMonth = newNextMonth.toISOString().slice(0, 10);
-      }
+      // const current = new Date(state.selectedDate + "T00:00:00Z");
+      // const prevDay = new Date(current);
+      // prevDay.setUTCDate(current.getUTCDate() - 1);
+      // state.selectedDate = prevDay.toISOString().slice(0, 10);
+      // state.prevDate = getPrevDateString(state.selectedDate);
+      // state.nextDate = getNextDateString(state.selectedDate);
+      // // Update month if crossing month boundary
+      // if (
+      //   prevDay.getUTCMonth() !== current.getUTCMonth() ||
+      //   prevDay.getUTCFullYear() !== current.getUTCFullYear()
+      // ) {
+      //   const newMonth = new Date(
+      //     Date.UTC(prevDay.getUTCFullYear(), prevDay.getUTCMonth(), 1),
+      //   );
+      //   const newPrevMonth = new Date(
+      //     Date.UTC(prevDay.getUTCFullYear(), prevDay.getUTCMonth() - 1, 1),
+      //   );
+      //   const newNextMonth = new Date(
+      //     Date.UTC(prevDay.getUTCFullYear(), prevDay.getUTCMonth() + 1, 1),
+      //   );
+      //   state.currentMonth = newMonth.toISOString().slice(0, 10);
+      //   state.prevMonth = newPrevMonth.toISOString().slice(0, 10);
+      //   state.nextMonth = newNextMonth.toISOString().slice(0, 10);
+      // }
     },
     setNextDate: (state) => {
       const current = new Date(state.selectedDate + "T00:00:00Z");
@@ -229,6 +243,8 @@ export const {
   setPrevDate,
   setNextDate,
   setWorkoutDates,
+  setTransitionPrevMonth,
+  setTransitionNextMonth,
 } = calendarSlice.actions;
 
 export default calendarSlice.reducer;

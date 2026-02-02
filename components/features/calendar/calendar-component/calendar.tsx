@@ -1,13 +1,9 @@
 import { StyleSheet, View } from "react-native";
 import CalendarGrid from "../calendar-component/calendar-grid";
 
-//month
-//days
-//events down the road
-
 type CalendarProps = {
   //props to come
-  month: Date;
+  month: Date | string;
   days?: Array<string>;
   events?: Array<any>;
 };

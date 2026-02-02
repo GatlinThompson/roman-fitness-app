@@ -3,7 +3,7 @@ import CalendarDay from "./calendar-day";
 
 type CalendarGridProps = {
   //props to come
-  month: Date;
+  month: Date | string;
 };
 
 // Helper function to get all days in a specific month
@@ -41,23 +41,21 @@ export default function CalendarGrid({ month }: CalendarGridProps) {
   const cellHeight = GRID_HEIGHT / totalRows;
 
   return (
-    <View style={styles.container}>
-      <View style={[styles.grid, { height: GRID_HEIGHT }]}>
-        {emptyCells.map((_, index) => (
-          <View
-            key={`empty-${index}`}
-            style={[styles.dayCell, { height: cellHeight }]}
-          />
-        ))}
-        {daysInMonth.map((day, index) => (
-          <View
-            key={`day-${index}`}
-            style={[styles.dayCell, { height: cellHeight }]}
-          >
-            <CalendarDay day={day} />
-          </View>
-        ))}
-      </View>
+    <View style={[styles.container, styles.grid]}>
+      {emptyCells.map((_, index) => (
+        <View
+          key={`empty-${index}`}
+          style={[styles.dayCell, { height: cellHeight }]}
+        />
+      ))}
+      {daysInMonth.map((day, index) => (
+        <View
+          key={`day-${index}`}
+          style={[styles.dayCell, { height: cellHeight }]}
+        >
+          <CalendarDay day={day} />
+        </View>
+      ))}
     </View>
   );
 }

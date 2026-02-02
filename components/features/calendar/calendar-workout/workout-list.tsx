@@ -1,61 +1,61 @@
 import { useWorkoutSwipe } from "@/hooks/use-workout-swipe";
 import { color } from "@/styles/color";
-import { useEffect, useRef } from "react";
-import { Animated, StyleSheet, View } from "react-native";
+import { useLayoutEffect, useRef } from "react";
+import { Animated, Dimensions, StyleSheet, View } from "react-native";
 import { useSelector } from "react-redux";
 import WorkoutDay from "./workout-day";
 
-const SLIDE_DISTANCE = 300;
-const FADE_START_OPACITY = 0.3;
-const ANIMATION_CONFIG = {
-  spring: { tension: 80, friction: 12 },
-  fade: { duration: 200 },
-};
+const SCREEN_WIDTH = Dimensions.get("window").width;
 
 export default function WorkoutList() {
   const selectedDate = useSelector((state: any) => state.calendar.selectedDate);
-  const { panResponder } = useWorkoutSwipe();
+  const prevDate = useSelector((state: any) => state.calendar.prevDate);
+  const nextDate = useSelector((state: any) => state.calendar.nextDate);
+  const { panResponder, pan, fadeAnim, resetAnimating } = useWorkoutSwipe();
   const previousDateRef = useRef<string>(selectedDate);
-  const slideAnim = useRef(new Animated.Value(0)).current;
-  const fadeAnim = useRef(new Animated.Value(1)).current;
 
-  useEffect(() => {
-    if (previousDateRef.current === selectedDate) return;
+  // Reset pan after date changes to recenter the carousel
+  useLayoutEffect(() => {
+    const dateChanged = previousDateRef.current !== selectedDate;
 
-    const prevDate = new Date(previousDateRef.current + "T00:00:00Z");
-    const currDate = new Date(selectedDate + "T00:00:00Z");
-    const startPos = currDate > prevDate ? SLIDE_DISTANCE : -SLIDE_DISTANCE;
+    if (dateChanged) {
+      // Reset position and ensure visibility
+      pan.setValue(0);
+      fadeAnim.setValue(1);
+      resetAnimating();
 
-    slideAnim.setValue(startPos);
-    fadeAnim.setValue(FADE_START_OPACITY);
+      previousDateRef.current = selectedDate;
+    }
+  }, [selectedDate, pan, fadeAnim, resetAnimating]);
 
-    Animated.parallel([
-      Animated.spring(slideAnim, {
-        toValue: 0,
-        useNativeDriver: true,
-        ...ANIMATION_CONFIG.spring,
-      }),
-      Animated.timing(fadeAnim, {
-        toValue: 1,
-        useNativeDriver: true,
-        ...ANIMATION_CONFIG.fade,
-      }),
-    ]).start();
-
-    previousDateRef.current = selectedDate;
-  }, [selectedDate, slideAnim, fadeAnim]);
+  const translateX = pan.interpolate({
+    inputRange: [-SCREEN_WIDTH, 0, SCREEN_WIDTH],
+    outputRange: [-SCREEN_WIDTH * 2, -SCREEN_WIDTH, 0],
+    extrapolate: "clamp",
+  });
 
   return (
-    <View style={styles.container} {...panResponder.panHandlers}>
-      <Animated.View
-        style={{
-          flex: 1,
-          transform: [{ translateX: slideAnim }],
-          opacity: fadeAnim,
-        }}
-      >
-        <WorkoutDay date={selectedDate} />
-      </Animated.View>
+    <View style={styles.container}>
+      <View style={styles.carouselWrapper} {...panResponder.panHandlers}>
+        <Animated.View
+          style={[
+            styles.carouselContainer,
+            {
+              transform: [{ translateX }],
+            },
+          ]}
+        >
+          <View style={[styles.dateContainer, { opacity: 0 }]}>
+            <WorkoutDay date={prevDate} />
+          </View>
+          <Animated.View style={[styles.dateContainer, { opacity: 1 }]}>
+            <WorkoutDay date={selectedDate} />
+          </Animated.View>
+          <View style={[styles.dateContainer, { opacity: 0 }]}>
+            <WorkoutDay date={nextDate} />
+          </View>
+        </Animated.View>
+      </View>
     </View>
   );
 }
@@ -66,9 +66,21 @@ const styles = StyleSheet.create({
     backgroundColor: color.blackBackground.backgroundColor,
     height: "100%",
     marginHorizontal: -8,
-    paddingHorizontal: 16,
-    paddingTop: 25,
     borderWidth: 2,
     borderTopColor: color.blackBackground.borderColor,
+  },
+  carouselWrapper: {
+    flex: 1,
+    overflow: "hidden",
+    paddingTop: 25,
+  },
+  carouselContainer: {
+    flexDirection: "row",
+    width: SCREEN_WIDTH * 3,
+    height: "100%",
+  },
+  dateContainer: {
+    width: SCREEN_WIDTH,
+    paddingHorizontal: 16,
   },
 });

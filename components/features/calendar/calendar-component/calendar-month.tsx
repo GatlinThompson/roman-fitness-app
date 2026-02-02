@@ -2,7 +2,7 @@ import { color } from "@/styles/color";
 import { StyleSheet, Text, View } from "react-native";
 
 type CalendarMonthProps = {
-  month: Date;
+  month: Date | string;
 };
 
 export default function CalendarMonth({ month }: CalendarMonthProps) {

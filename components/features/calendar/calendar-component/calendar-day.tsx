@@ -49,6 +49,8 @@ export default function CalendarDay({ day }: CalendarDayProps) {
         const date = String(day.getDate()).padStart(2, "0");
         const dateString = `${year}-${month}-${date}`;
 
+        console.log("Selected date:", dateString);
+
         dispatch(setSelectedDate(dateString));
       }}
     >
