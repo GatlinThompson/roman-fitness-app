@@ -132,10 +132,7 @@ export default function CalendarNew() {
             useNativeDriver: true,
             tension: 65,
             friction: 8,
-          }).start(() => {
-            // optional: brief lock even on snap-back
-            // disableSwipeFor(250);
-          });
+          }).start(() => {});
         }
       },
     }),

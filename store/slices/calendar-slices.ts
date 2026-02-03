@@ -179,30 +179,30 @@ const calendarSlice = createSlice({
       state.nextDate = getNextDateString(state.selectedDate);
     },
     setPrevDate: (state) => {
-      // const current = new Date(state.selectedDate + "T00:00:00Z");
-      // const prevDay = new Date(current);
-      // prevDay.setUTCDate(current.getUTCDate() - 1);
-      // state.selectedDate = prevDay.toISOString().slice(0, 10);
-      // state.prevDate = getPrevDateString(state.selectedDate);
-      // state.nextDate = getNextDateString(state.selectedDate);
-      // // Update month if crossing month boundary
-      // if (
-      //   prevDay.getUTCMonth() !== current.getUTCMonth() ||
-      //   prevDay.getUTCFullYear() !== current.getUTCFullYear()
-      // ) {
-      //   const newMonth = new Date(
-      //     Date.UTC(prevDay.getUTCFullYear(), prevDay.getUTCMonth(), 1),
-      //   );
-      //   const newPrevMonth = new Date(
-      //     Date.UTC(prevDay.getUTCFullYear(), prevDay.getUTCMonth() - 1, 1),
-      //   );
-      //   const newNextMonth = new Date(
-      //     Date.UTC(prevDay.getUTCFullYear(), prevDay.getUTCMonth() + 1, 1),
-      //   );
-      //   state.currentMonth = newMonth.toISOString().slice(0, 10);
-      //   state.prevMonth = newPrevMonth.toISOString().slice(0, 10);
-      //   state.nextMonth = newNextMonth.toISOString().slice(0, 10);
-      // }
+      const current = new Date(state.selectedDate + "T00:00:00Z");
+      const prevDay = new Date(current);
+      prevDay.setUTCDate(current.getUTCDate() - 1);
+      state.selectedDate = prevDay.toISOString().slice(0, 10);
+      state.prevDate = getPrevDateString(state.selectedDate);
+      state.nextDate = getNextDateString(state.selectedDate);
+      // Update month if crossing month boundary
+      if (
+        prevDay.getUTCMonth() !== current.getUTCMonth() ||
+        prevDay.getUTCFullYear() !== current.getUTCFullYear()
+      ) {
+        const newMonth = new Date(
+          Date.UTC(prevDay.getUTCFullYear(), prevDay.getUTCMonth(), 1),
+        );
+        const newPrevMonth = new Date(
+          Date.UTC(prevDay.getUTCFullYear(), prevDay.getUTCMonth() - 1, 1),
+        );
+        const newNextMonth = new Date(
+          Date.UTC(prevDay.getUTCFullYear(), prevDay.getUTCMonth() + 1, 1),
+        );
+        state.currentMonth = newMonth.toISOString().slice(0, 10);
+        state.prevMonth = newPrevMonth.toISOString().slice(0, 10);
+        state.nextMonth = newNextMonth.toISOString().slice(0, 10);
+      }
     },
     setNextDate: (state) => {
       const current = new Date(state.selectedDate + "T00:00:00Z");
