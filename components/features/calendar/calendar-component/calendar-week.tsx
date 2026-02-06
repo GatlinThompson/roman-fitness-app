@@ -1,9 +1,14 @@
 import { color } from "@/styles/color";
+import React from "react";
 import { StyleSheet, Text, View } from "react-native";
 
 const daysOfWeek = ["S", "M", "T", "W", "T", "F", "S"];
 
-export default function CalendarWeek() {
+/**
+ * CalendarWeek - Static week labels component
+ * Memoized since it never changes - pure static content
+ */
+function CalendarWeek() {
   return (
     <View style={styles.weekLabels}>
       {daysOfWeek.map((day, index) => (
@@ -14,6 +19,9 @@ export default function CalendarWeek() {
     </View>
   );
 }
+
+// Memoize since this component never changes
+export default React.memo(CalendarWeek);
 
 const styles = StyleSheet.create({
   weekLabels: {

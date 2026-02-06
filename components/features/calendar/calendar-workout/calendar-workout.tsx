@@ -2,7 +2,7 @@ import Divider from "@/components/ui/divider";
 import Spinner from "@/components/ui/spinner";
 import { useRealtimeWorkout } from "@/hooks/use-real-time-workout";
 import { color } from "@/styles/color";
-import { useEffect, useState } from "react";
+import React, { useMemo } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import LiftRow from "../../workout/lift_row";
@@ -13,28 +13,53 @@ type WorkoutLift = {
   date: string;
 };
 
-export default function CalendarWorkout({ date }: WorkoutLift) {
-  const [displayWorkout, setDisplayWorkout] = useState<any[] | null>(null);
-  const [showLoading, setShowLoading] = useState(true);
-
+/**
+ * CalendarWorkout - Optimized workout display component
+ * Features:
+ * - Direct workout rendering without artificial delays
+ * - Memoized workout items for optimal performance
+ * - Efficient re-rendering on date changes only
+ */
+function CalendarWorkout({ date }: WorkoutLift) {
   const { workout, loading } = useRealtimeWorkout({
     workout_date: date,
   });
 
-  useEffect(() => {
-    setDisplayWorkout(null);
-    setShowLoading(true);
-    const timer = setTimeout(() => setShowLoading(false), 500);
-    return () => clearTimeout(timer);
-  }, [date]);
+  /**
+   * Memoized workout items to prevent re-renders
+   * Only recalculates when workout data changes
+   */
+  const workoutItems = useMemo(() => {
+    if (!workout || workout.length === 0) return null;
 
-  useEffect(() => {
-    if (!loading && workout) {
-      setDisplayWorkout(workout);
-    }
-  }, [workout, loading]);
+    return workout.map((lift: any, index: number) => {
+      const isLast = index === workout.length - 1;
+      const showDivider = !isLast;
 
-  if (showLoading || loading || !displayWorkout) {
+      if (isSuperSet(lift.lift)) {
+        return (
+          <View key={`${date}-${index}`}>
+            <SuperSetRow
+              superset={lift.lift.superset}
+              lift={lift.lift}
+              last={isLast}
+            />
+            {showDivider && <Divider style={styles.dividerLarge} />}
+          </View>
+        );
+      }
+
+      return (
+        <View key={`${date}-${index}`}>
+          <LiftRow lift={lift.lift} last={isLast} />
+          {showDivider && <Divider style={styles.dividerSmall} />}
+        </View>
+      );
+    });
+  }, [workout, date]);
+
+  // Loading state
+  if (loading) {
     return (
       <View style={styles.emptyContainer}>
         <Spinner />
@@ -43,7 +68,8 @@ export default function CalendarWorkout({ date }: WorkoutLift) {
     );
   }
 
-  if (displayWorkout.length === 0) {
+  // Empty state
+  if (!workout || workout.length === 0) {
     return (
       <View style={styles.emptyContainer}>
         <Text style={styles.emptyText}>
@@ -53,6 +79,7 @@ export default function CalendarWorkout({ date }: WorkoutLift) {
     );
   }
 
+  // Workout display
   return (
     <ScrollView
       style={styles.container}
@@ -60,37 +87,14 @@ export default function CalendarWorkout({ date }: WorkoutLift) {
       nestedScrollEnabled={true}
       showsVerticalScrollIndicator={false}
     >
-      {displayWorkout.map((lift: any, index: number) => {
-        if (isSuperSet(lift.lift)) {
-          return (
-            <View key={index}>
-              <SuperSetRow
-                superset={lift.lift.superset}
-                lift={lift.lift}
-                last={index === displayWorkout.length - 1}
-              />
-              {index !== displayWorkout.length - 1 && (
-                <Divider style={{ marginVertical: 8 }} />
-              )}
-            </View>
-          );
-        } else {
-          return (
-            <View key={index}>
-              <LiftRow
-                lift={lift.lift}
-                last={index === displayWorkout.length - 1}
-              />
-              {index !== displayWorkout.length - 1 && (
-                <Divider style={{ marginVertical: 4 }} />
-              )}
-            </View>
-          );
-        }
-      })}
+      {workoutItems}
     </ScrollView>
   );
 }
+
+// Memoize component to prevent unnecessary re-renders
+export default React.memo(CalendarWorkout);
+
 const styles = StyleSheet.create({
   emptyContainer: {
     flex: 1,
@@ -99,6 +103,12 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
+  },
+  dividerLarge: {
+    marginVertical: 8,
+  },
+  dividerSmall: {
+    marginVertical: 4,
   },
   emptyText: {
     fontSize: 20,
