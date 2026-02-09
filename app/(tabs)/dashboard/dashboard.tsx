@@ -7,10 +7,8 @@ import { StyleSheet, View } from "react-native";
 export default function TabTwoScreen() {
   return (
     <ContainerView>
-      <View style={styles.calendarSection}>
+      <View style={styles.container}>
         <CalendarView />
-      </View>
-      <View style={styles.workoutSection}>
         <WorkoutList />
       </View>
     </ContainerView>
@@ -20,12 +18,5 @@ export default function TabTwoScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-  },
-  calendarSection: {
-    flex: 1,
-  },
-  workoutSection: {
-    flex: 1,
-    marginTop: -40,
   },
 });

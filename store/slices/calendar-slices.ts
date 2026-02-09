@@ -12,42 +12,51 @@ interface CalendarState {
   transitionDate: string | null;
   shouldAnimateWorkout: boolean;
   workoutAnimationDirection: "left" | "right" | null;
+  nextWorkout: { workout: any[]; id?: number } | undefined;
+  prevWorkout: { workout: any[]; id?: number } | undefined;
+  currentWorkout: { workout: any[]; id?: number } | undefined;
+  transitionWorkout: { workout: any[]; id?: number } | undefined;
 }
 
+const formatDateLocal = (date: Date): string => {
+  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(
+    date.getDate(),
+  ).padStart(2, "0")}`;
+};
+
 const getTodayString = (): string => {
-  const today = new Date();
-  return `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;
+  return formatDateLocal(new Date());
 };
 
 const getCurrentMonth = (): string => {
   const today = new Date();
   const currentMonth = new Date(today.getFullYear(), today.getMonth(), 1);
-  return currentMonth.toISOString().slice(0, 10);
+  return formatDateLocal(currentMonth);
 };
 
 const getPreviousMonth = (): string => {
   const today = new Date();
   const prevMonth = new Date(today.getFullYear(), today.getMonth() - 1, 1);
-  return prevMonth.toISOString().slice(0, 10);
+  return formatDateLocal(prevMonth);
 };
 const getNextMonth = (): string => {
   const today = new Date();
   const nextMonth = new Date(today.getFullYear(), today.getMonth() + 1, 1);
-  return nextMonth.toISOString().slice(0, 10);
+  return formatDateLocal(nextMonth);
 };
 
 const getPrevDateString = (dateString: string): string => {
-  const date = new Date(dateString + "T00:00:00Z");
+  const date = new Date(dateString + "T00:00:00");
   const prevDay = new Date(date);
   prevDay.setDate(date.getDate() - 1);
-  return prevDay.toISOString().slice(0, 10);
+  return formatDateLocal(prevDay);
 };
 
 const getNextDateString = (dateString: string): string => {
-  const date = new Date(dateString + "T00:00:00Z");
+  const date = new Date(dateString + "T00:00:00");
   const nextDay = new Date(date);
   nextDay.setDate(date.getDate() + 1);
-  return nextDay.toISOString().slice(0, 10);
+  return formatDateLocal(nextDay);
 };
 
 const todayString = getTodayString();
@@ -64,6 +73,10 @@ const initialState: CalendarState = {
   transitionDate: todayString,
   shouldAnimateWorkout: false,
   workoutAnimationDirection: null,
+  nextWorkout: undefined,
+  prevWorkout: undefined,
+  currentWorkout: undefined,
+  transitionWorkout: undefined,
 };
 
 const calendarSlice = createSlice({
@@ -71,43 +84,40 @@ const calendarSlice = createSlice({
   initialState,
   reducers: {
     setSelectedDate: (state, action: PayloadAction<string>) => {
-      const previousDate = new Date(state.selectedDate + "T00:00:00Z");
-      const newDate = new Date(action.payload + "T00:00:00Z");
-      const currentMonthDate = new Date(state.currentMonth + "T00:00:00Z");
+      const previousDate = new Date(state.selectedDate + "T00:00:00");
+      const newDate = new Date(action.payload + "T00:00:00");
+      const currentMonthDate = new Date(state.currentMonth + "T00:00:00");
 
-      // Determine animation direction based on date comparison
-      if (newDate.getTime() !== previousDate.getTime()) {
-        state.shouldAnimateWorkout = true;
-        state.workoutAnimationDirection =
-          newDate.getTime() > previousDate.getTime() ? "left" : "right";
-      } else {
-        state.shouldAnimateWorkout = false;
-        state.workoutAnimationDirection = null;
-      }
+      // Calendar clicks should not trigger the workout slide animation
+      state.shouldAnimateWorkout = false;
+      state.workoutAnimationDirection = null;
 
-      state.selectedDate = newDate.toISOString().slice(0, 10);
-      state.prevDate = getPrevDateString(newDate.toISOString().slice(0, 10));
-      state.nextDate = getNextDateString(newDate.toISOString().slice(0, 10));
+      const newDateString = formatDateLocal(newDate);
+      state.selectedDate = newDateString;
+      state.prevDate = getPrevDateString(newDateString);
+      state.nextDate = getNextDateString(newDateString);
 
       // Update currentMonth if selected date is in a different month
       if (
-        newDate.getUTCMonth() !== currentMonthDate.getUTCMonth() ||
-        newDate.getUTCFullYear() !== currentMonthDate.getUTCFullYear()
+        newDate.getMonth() !== currentMonthDate.getMonth() ||
+        newDate.getFullYear() !== currentMonthDate.getFullYear()
       ) {
-        const newMonth = new Date(
-          Date.UTC(newDate.getUTCFullYear(), newDate.getUTCMonth(), 1),
-        );
+        const newMonth = new Date(newDate.getFullYear(), newDate.getMonth(), 1);
         const newPrevMonth = new Date(
-          Date.UTC(newDate.getUTCFullYear(), newDate.getUTCMonth() - 1, 1),
+          newDate.getFullYear(),
+          newDate.getMonth() - 1,
+          1,
         );
         const newNextMonth = new Date(
-          Date.UTC(newDate.getUTCFullYear(), newDate.getUTCMonth() + 1, 1),
+          newDate.getFullYear(),
+          newDate.getMonth() + 1,
+          1,
         );
 
         state.transitionMonth = state.currentMonth;
-        state.currentMonth = newMonth.toISOString().slice(0, 10);
-        state.prevMonth = newPrevMonth.toISOString().slice(0, 10);
-        state.nextMonth = newNextMonth.toISOString().slice(0, 10);
+        state.currentMonth = formatDateLocal(newMonth);
+        state.prevMonth = formatDateLocal(newPrevMonth);
+        state.nextMonth = formatDateLocal(newNextMonth);
       }
     },
     setCurrentMonth: (state, action: PayloadAction<string>) => {
@@ -121,13 +131,13 @@ const calendarSlice = createSlice({
       state.currentMonth = state.prevMonth;
 
       // Update selectedDate to first of new month (or today if current month)
-      const newCurrentMonth = new Date(state.currentMonth + "T00:00:00Z");
-      state.selectedDate = newCurrentMonth.toISOString().slice(0, 10);
+      const newCurrentMonth = new Date(state.currentMonth + "T00:00:00");
+      state.selectedDate = formatDateLocal(newCurrentMonth);
 
       const today = new Date();
       const isTodayInNewMonth =
-        today.getUTCMonth() === newCurrentMonth.getUTCMonth() &&
-        today.getUTCFullYear() === newCurrentMonth.getUTCFullYear();
+        today.getMonth() === newCurrentMonth.getMonth() &&
+        today.getFullYear() === newCurrentMonth.getFullYear();
       if (isTodayInNewMonth) {
         state.selectedDate = getTodayString();
       }
@@ -140,13 +150,13 @@ const calendarSlice = createSlice({
       state.currentMonth = state.nextMonth;
 
       // Update selectedDate to first of new month (or today if current month)
-      const newCurrentMonth = new Date(state.currentMonth + "T00:00:00Z");
-      state.selectedDate = newCurrentMonth.toISOString().slice(0, 10);
+      const newCurrentMonth = new Date(state.currentMonth + "T00:00:00");
+      state.selectedDate = formatDateLocal(newCurrentMonth);
 
       const today = new Date();
       const isTodayInNewMonth =
-        today.getUTCMonth() === newCurrentMonth.getUTCMonth() &&
-        today.getUTCFullYear() === newCurrentMonth.getUTCFullYear();
+        today.getMonth() === newCurrentMonth.getMonth() &&
+        today.getFullYear() === newCurrentMonth.getFullYear();
       if (isTodayInNewMonth) {
         state.selectedDate = getTodayString();
       }
@@ -161,9 +171,9 @@ const calendarSlice = createSlice({
       const newPrevMonth = new Date(year, month - 2, 1);
       const currentMonth = new Date(year, month - 1, 1);
       const newNextMonth = new Date(year, month, 1);
-      state.currentMonth = currentMonth.toISOString().slice(0, 10);
-      state.prevMonth = newPrevMonth.toISOString().slice(0, 10);
-      state.nextMonth = newNextMonth.toISOString().slice(0, 10);
+      state.currentMonth = formatDateLocal(currentMonth);
+      state.prevMonth = formatDateLocal(newPrevMonth);
+      state.nextMonth = formatDateLocal(newNextMonth);
 
       const today = new Date();
       const isTodayInNewMonth =
@@ -181,9 +191,9 @@ const calendarSlice = createSlice({
       const newPrevMonth = new Date(year, month - 2, 1);
       const currentMonth = new Date(year, month - 1, 1);
       const newNextMonth = new Date(year, month, 1);
-      state.currentMonth = currentMonth.toISOString().slice(0, 10);
-      state.prevMonth = newPrevMonth.toISOString().slice(0, 10);
-      state.nextMonth = newNextMonth.toISOString().slice(0, 10);
+      state.currentMonth = formatDateLocal(currentMonth);
+      state.prevMonth = formatDateLocal(newPrevMonth);
+      state.nextMonth = formatDateLocal(newNextMonth);
 
       const today = new Date();
       const isTodayInNewMonth =
@@ -200,37 +210,31 @@ const calendarSlice = createSlice({
       state.selectedDate = state.prevDate;
 
       // Update month if crossing month boundary
-      const selectedDateObj = new Date(state.selectedDate + "T00:00:00Z");
-      const currentMonthDate = new Date(state.currentMonth + "T00:00:00Z");
+      const selectedDateObj = new Date(state.selectedDate + "T00:00:00");
+      const currentMonthDate = new Date(state.currentMonth + "T00:00:00");
       if (
-        selectedDateObj.getUTCMonth() !== currentMonthDate.getUTCMonth() ||
-        selectedDateObj.getUTCFullYear() !== currentMonthDate.getUTCFullYear()
+        selectedDateObj.getMonth() !== currentMonthDate.getMonth() ||
+        selectedDateObj.getFullYear() !== currentMonthDate.getFullYear()
       ) {
         const newMonth = new Date(
-          Date.UTC(
-            selectedDateObj.getUTCFullYear(),
-            selectedDateObj.getUTCMonth(),
-            1,
-          ),
+          selectedDateObj.getFullYear(),
+          selectedDateObj.getMonth(),
+          1,
         );
         const newPrevMonth = new Date(
-          Date.UTC(
-            selectedDateObj.getUTCFullYear(),
-            selectedDateObj.getUTCMonth() - 1,
-            1,
-          ),
+          selectedDateObj.getFullYear(),
+          selectedDateObj.getMonth() - 1,
+          1,
         );
         const newNextMonth = new Date(
-          Date.UTC(
-            selectedDateObj.getUTCFullYear(),
-            selectedDateObj.getUTCMonth() + 1,
-            1,
-          ),
+          selectedDateObj.getFullYear(),
+          selectedDateObj.getMonth() + 1,
+          1,
         );
         state.transitionMonth = state.currentMonth;
-        state.currentMonth = newMonth.toISOString().slice(0, 10);
-        state.prevMonth = newPrevMonth.toISOString().slice(0, 10);
-        state.nextMonth = newNextMonth.toISOString().slice(0, 10);
+        state.currentMonth = formatDateLocal(newMonth);
+        state.prevMonth = formatDateLocal(newPrevMonth);
+        state.nextMonth = formatDateLocal(newNextMonth);
       }
 
       state.shouldAnimateWorkout = false;
@@ -241,37 +245,31 @@ const calendarSlice = createSlice({
       state.selectedDate = state.nextDate;
 
       // Update month if crossing month boundary
-      const selectedDateObj = new Date(state.selectedDate + "T00:00:00Z");
-      const currentMonthDate = new Date(state.currentMonth + "T00:00:00Z");
+      const selectedDateObj = new Date(state.selectedDate + "T00:00:00");
+      const currentMonthDate = new Date(state.currentMonth + "T00:00:00");
       if (
-        selectedDateObj.getUTCMonth() !== currentMonthDate.getUTCMonth() ||
-        selectedDateObj.getUTCFullYear() !== currentMonthDate.getUTCFullYear()
+        selectedDateObj.getMonth() !== currentMonthDate.getMonth() ||
+        selectedDateObj.getFullYear() !== currentMonthDate.getFullYear()
       ) {
         const newMonth = new Date(
-          Date.UTC(
-            selectedDateObj.getUTCFullYear(),
-            selectedDateObj.getUTCMonth(),
-            1,
-          ),
+          selectedDateObj.getFullYear(),
+          selectedDateObj.getMonth(),
+          1,
         );
         const newPrevMonth = new Date(
-          Date.UTC(
-            selectedDateObj.getUTCFullYear(),
-            selectedDateObj.getUTCMonth() - 1,
-            1,
-          ),
+          selectedDateObj.getFullYear(),
+          selectedDateObj.getMonth() - 1,
+          1,
         );
         const newNextMonth = new Date(
-          Date.UTC(
-            selectedDateObj.getUTCFullYear(),
-            selectedDateObj.getUTCMonth() + 1,
-            1,
-          ),
+          selectedDateObj.getFullYear(),
+          selectedDateObj.getMonth() + 1,
+          1,
         );
         state.transitionMonth = state.currentMonth;
-        state.currentMonth = newMonth.toISOString().slice(0, 10);
-        state.prevMonth = newPrevMonth.toISOString().slice(0, 10);
-        state.nextMonth = newNextMonth.toISOString().slice(0, 10);
+        state.currentMonth = formatDateLocal(newMonth);
+        state.prevMonth = formatDateLocal(newPrevMonth);
+        state.nextMonth = formatDateLocal(newNextMonth);
       }
 
       state.shouldAnimateWorkout = false;
@@ -292,37 +290,32 @@ const calendarSlice = createSlice({
       state.nextDate = getNextDateString(state.selectedDate);
 
       // Update month if crossing month boundary
-      const selectedDateObj = new Date(state.selectedDate + "T00:00:00Z");
-      const currentMonthDate = new Date(state.currentMonth + "T00:00:00Z");
+      const selectedDateObj = new Date(state.selectedDate + "T00:00:00");
+      const currentMonthDate = new Date(state.currentMonth + "T00:00:00");
       if (
-        selectedDateObj.getUTCMonth() !== currentMonthDate.getUTCMonth() ||
-        selectedDateObj.getUTCFullYear() !== currentMonthDate.getUTCFullYear()
+        selectedDateObj.getMonth() !== currentMonthDate.getMonth() ||
+        selectedDateObj.getFullYear() !== currentMonthDate.getFullYear()
       ) {
         const newMonth = new Date(
-          Date.UTC(
-            selectedDateObj.getUTCFullYear(),
-            selectedDateObj.getUTCMonth(),
-            1,
-          ),
+          selectedDateObj.getFullYear(),
+          selectedDateObj.getMonth(),
+          1,
         );
         const newPrevMonth = new Date(
-          Date.UTC(
-            selectedDateObj.getUTCFullYear(),
-            selectedDateObj.getUTCMonth() - 1,
-            1,
-          ),
+          selectedDateObj.getFullYear(),
+          selectedDateObj.getMonth() - 1,
+          1,
         );
         const newNextMonth = new Date(
-          Date.UTC(
-            selectedDateObj.getUTCFullYear(),
-            selectedDateObj.getUTCMonth() + 1,
-            1,
-          ),
+          selectedDateObj.getFullYear(),
+          selectedDateObj.getMonth() + 1,
+          1,
         );
+
         state.transitionMonth = state.currentMonth;
-        state.currentMonth = newMonth.toISOString().slice(0, 10);
-        state.prevMonth = newPrevMonth.toISOString().slice(0, 10);
-        state.nextMonth = newNextMonth.toISOString().slice(0, 10);
+        state.currentMonth = formatDateLocal(newMonth);
+        state.prevMonth = formatDateLocal(newPrevMonth);
+        state.nextMonth = formatDateLocal(newNextMonth);
       }
     },
     setNextDate: (state) => {
@@ -331,38 +324,32 @@ const calendarSlice = createSlice({
       state.nextDate = getNextDateString(state.selectedDate);
 
       // Update month if crossing month boundary
-      const selectedDateObj = new Date(state.selectedDate + "T00:00:00Z");
-      const currentMonthDate = new Date(state.currentMonth + "T00:00:00Z");
+      const selectedDateObj = new Date(state.selectedDate + "T00:00:00");
+      const currentMonthDate = new Date(state.currentMonth + "T00:00:00");
       if (
-        selectedDateObj.getUTCMonth() !== currentMonthDate.getUTCMonth() ||
-        selectedDateObj.getUTCFullYear() !== currentMonthDate.getUTCFullYear()
+        selectedDateObj.getMonth() !== currentMonthDate.getMonth() ||
+        selectedDateObj.getFullYear() !== currentMonthDate.getFullYear()
       ) {
         const newMonth = new Date(
-          Date.UTC(
-            selectedDateObj.getUTCFullYear(),
-            selectedDateObj.getUTCMonth(),
-            1,
-          ),
+          selectedDateObj.getFullYear(),
+          selectedDateObj.getMonth(),
+          1,
         );
         const newPrevMonth = new Date(
-          Date.UTC(
-            selectedDateObj.getUTCFullYear(),
-            selectedDateObj.getUTCMonth() - 1,
-            1,
-          ),
+          selectedDateObj.getFullYear(),
+          selectedDateObj.getMonth() - 1,
+          1,
         );
         const newNextMonth = new Date(
-          Date.UTC(
-            selectedDateObj.getUTCFullYear(),
-            selectedDateObj.getUTCMonth() + 1,
-            1,
-          ),
+          selectedDateObj.getFullYear(),
+          selectedDateObj.getMonth() + 1,
+          1,
         );
 
         state.transitionMonth = state.currentMonth;
-        state.currentMonth = newMonth.toISOString().slice(0, 10);
-        state.prevMonth = newPrevMonth.toISOString().slice(0, 10);
-        state.nextMonth = newNextMonth.toISOString().slice(0, 10);
+        state.currentMonth = formatDateLocal(newMonth);
+        state.prevMonth = formatDateLocal(newPrevMonth);
+        state.nextMonth = formatDateLocal(newNextMonth);
       }
     },
   },

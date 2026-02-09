@@ -1,4 +1,5 @@
 import { color } from "@/styles/color";
+import { getDateString } from "@/utils/get-today";
 import { StyleSheet, Text, View } from "react-native";
 
 const liftDays = [
@@ -17,17 +18,21 @@ type SelectedDateProps = {
 };
 
 export default function SelectedDate({ date }: SelectedDateProps) {
-  const formattedDate = new Date(date + "T00:00:00").toLocaleString("default", {
+  const normalizedDate = getDateString(date);
+  const [year, month, day] = normalizedDate.split("-").map(Number);
+  const dateObj = new Date(year, month - 1, day);
+
+  const formattedDate = dateObj.toLocaleString("default", {
     month: "long",
     day: "numeric",
     year: "numeric",
   });
 
-  const weekDay = new Date(date + "T00:00:00").toLocaleString("default", {
+  const weekDay = dateObj.toLocaleString("default", {
     weekday: "long",
   });
 
-  const dayIndex = new Date(date + "T00:00:00").getDay();
+  const dayIndex = dateObj.getDay();
   const liftDay = liftDays[dayIndex];
 
   return (

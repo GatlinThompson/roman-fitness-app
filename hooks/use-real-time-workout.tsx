@@ -60,10 +60,16 @@ export function useRealtimeWorkout({
         if (!workout_date) {
           todayStr = getTodayString();
         } else {
-          todayStr =
-            typeof workout_date === "string"
-              ? workout_date
-              : workout_date.toISOString().split("T")[0];
+          if (typeof workout_date === "string") {
+            todayStr = workout_date;
+          } else {
+            todayStr = `${workout_date.getFullYear()}-${String(
+              workout_date.getMonth() + 1,
+            ).padStart(2, "0")}-${String(workout_date.getDate()).padStart(
+              2,
+              "0",
+            )}`;
+          }
         }
 
         console.warn("Fetching workout for date:", todayStr);

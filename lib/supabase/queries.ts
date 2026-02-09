@@ -11,12 +11,18 @@ export async function getWorkoutDatesForMonth(
   month: number,
 ): Promise<string[]> {
   try {
+    const formatDateLocal = (date: Date): string => {
+      return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(
+        date.getDate(),
+      ).padStart(2, "0")}`;
+    };
+
     // Create start and end dates for the month
     const startDate = new Date(year, month - 1, 1);
     const endDate = new Date(year, month, 0); // Last day of month
 
-    const startDateString = startDate.toISOString().slice(0, 10);
-    const endDateString = endDate.toISOString().slice(0, 10);
+    const startDateString = formatDateLocal(startDate);
+    const endDateString = formatDateLocal(endDate);
 
     // Query workouts table for dates in this month
     const { data, error } = await supabase

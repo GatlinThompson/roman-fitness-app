@@ -1,16 +1,17 @@
-import Divider from "@/components/ui/divider";
 import Spinner from "@/components/ui/spinner";
-import { useRealtimeWorkout } from "@/hooks/use-real-time-workout";
 import { color } from "@/styles/color";
-import React, { useMemo } from "react";
-import { StyleSheet, Text, View } from "react-native";
-import { ScrollView } from "react-native-gesture-handler";
-import LiftRow from "../../workout/lift_row";
-import SuperSetRow from "../../workout/super_set_row";
+import React, { useEffect, useMemo, useRef } from "react";
+import { ScrollView, StyleSheet, Text, View } from "react-native";
+import type { Lift } from "../../workout/lift_row";
+import type { SuperSet } from "../../workout/super_set_row";
 import { isSuperSet } from "../../workout/workout";
+import CalendarLiftRow from "./calendar-lift-row";
+import CalendarSuperSetRow from "./calendar-superset-row";
 
 type WorkoutLift = {
-  date: string;
+  workout: (Lift | SuperSet)[];
+  loading?: boolean;
+  dateKey?: string;
 };
 
 /**
@@ -20,11 +21,8 @@ type WorkoutLift = {
  * - Memoized workout items for optimal performance
  * - Efficient re-rendering on date changes only
  */
-function CalendarWorkout({ date }: WorkoutLift) {
-  const { workout, loading } = useRealtimeWorkout({
-    workout_date: date,
-  });
-
+function CalendarWorkout({ workout, loading = false, dateKey }: WorkoutLift) {
+  const scrollRef = useRef<ScrollView | null>(null);
   /**
    * Memoized workout items to prevent re-renders
    * Only recalculates when workout data changes
@@ -33,33 +31,32 @@ function CalendarWorkout({ date }: WorkoutLift) {
     if (!workout || workout.length === 0) return null;
 
     return workout.map((lift: any, index: number) => {
-      const isLast = index === workout.length - 1;
-      const showDivider = !isLast;
-
       if (isSuperSet(lift.lift)) {
         return (
-          <View key={`${date}-${index}`}>
-            <SuperSetRow
+          <View key={index}>
+            <CalendarSuperSetRow
               superset={lift.lift.superset}
               lift={lift.lift}
-              last={isLast}
             />
-            {showDivider && <Divider style={styles.dividerLarge} />}
           </View>
         );
       }
 
       return (
-        <View key={`${date}-${index}`}>
-          <LiftRow lift={lift.lift} last={isLast} />
-          {showDivider && <Divider style={styles.dividerSmall} />}
+        <View key={index}>
+          <CalendarLiftRow lift={lift.lift} />
         </View>
       );
     });
-  }, [workout, date]);
+  }, [workout]);
+
+  useEffect(() => {
+    if (!scrollRef.current) return;
+    scrollRef.current.scrollTo({ y: 0, animated: false });
+  }, [workout, dateKey]);
 
   // Loading state
-  if (loading) {
+  if (loading && (!workout || workout.length === 0)) {
     return (
       <View style={styles.emptyContainer}>
         <Spinner />
@@ -82,9 +79,9 @@ function CalendarWorkout({ date }: WorkoutLift) {
   // Workout display
   return (
     <ScrollView
+      ref={scrollRef}
       style={styles.container}
       scrollEnabled={true}
-      nestedScrollEnabled={true}
       showsVerticalScrollIndicator={false}
     >
       {workoutItems}

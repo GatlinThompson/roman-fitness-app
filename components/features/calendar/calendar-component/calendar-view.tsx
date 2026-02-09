@@ -193,7 +193,7 @@ export default function CalendarNew() {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    flex: 6,
   },
   carouselWrapper: {
     flex: 1,
