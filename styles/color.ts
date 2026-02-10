@@ -13,8 +13,8 @@ export const color = StyleSheet.create({
   darkForeground: {
     color: "#8d8d8d",
   },
-  muted: {
-    color: "#4b4b4b",
+  nested: {
+    color: "#1e1e20",
   },
   darkBackground: {
     backgroundColor: "#1c1c1c33",

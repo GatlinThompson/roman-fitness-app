@@ -1,5 +1,6 @@
 import { color } from "@/styles/color";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import { router } from "expo-router";
 import { StyleSheet, TouchableOpacity, View } from "react-native";
 
 const HEIGHT = 45;
@@ -13,8 +14,11 @@ export default function CalendarWorkoutButton({
 }: CalendarWorkoutButtonProps) {
   const text = editMode ? "Edit" : "Create";
 
+  const handlePress = () => {
+    router.push("/dashboard/create_workout");
+  };
   return (
-    <TouchableOpacity style={styles.container}>
+    <TouchableOpacity style={styles.container} onPress={handlePress}>
       {/* <View style={styles.blackBar}>
         <Text style={styles.text}>{text}</Text>
       </View> */}

@@ -45,6 +45,7 @@ export default function TabLayout() {
         name="dashboard"
         options={{
           title: "Dashboard",
+          popToTopOnBlur: true,
           tabBarIcon: ({ color }) => (
             <MaterialIcons name="dashboard" size={24} color={color} />
           ),
