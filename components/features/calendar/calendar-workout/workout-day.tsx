@@ -29,7 +29,7 @@ function WorkoutDay({ date, workout, loading }: WorkoutDayProps) {
         }}
       >
         <SelectedDate date={date} />
-        <CalendarWorkoutButton editMode={!!workout?.id} />
+        <CalendarWorkoutButton editMode={!!workout?.id} date={date} />
       </View>
       <CalendarWorkout
         workout={workout?.workout ?? []}

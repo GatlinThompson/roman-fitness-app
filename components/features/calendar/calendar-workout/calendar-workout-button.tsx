@@ -7,21 +7,27 @@ const HEIGHT = 45;
 
 type CalendarWorkoutButtonProps = {
   editMode: boolean;
+  date: string;
 };
 
 export default function CalendarWorkoutButton({
   editMode,
+  date,
 }: CalendarWorkoutButtonProps) {
+  const isSunday = new Date(date + "T00:00:00").getDay() === 0;
+
+  if (isSunday) {
+    return null; // Don't render the button on Sundays
+  }
+
   const text = editMode ? "Edit" : "Create";
 
   const handlePress = () => {
     router.push("/dashboard/create_workout");
   };
+
   return (
     <TouchableOpacity style={styles.container} onPress={handlePress}>
-      {/* <View style={styles.blackBar}>
-        <Text style={styles.text}>{text}</Text>
-      </View> */}
       <View style={styles.circle}>
         <MaterialIcons
           name={editMode ? "edit" : "add"}

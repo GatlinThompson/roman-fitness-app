@@ -11,10 +11,8 @@ export default function DashboardLayout() {
         name="create_workout"
         options={{
           headerShown: false,
-          headerShadowVisible: false,
-          headerStyle: { backgroundColor: "transparent" },
+
           animation: "fade",
-          headerBackButtonDisplayMode: "minimal",
         }}
       />
     </Stack>
