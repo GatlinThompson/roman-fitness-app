@@ -11,17 +11,17 @@ export default function ContainerView({ children }: ContainerViewProps) {
   const rotationAnim = useRef(new Animated.Value(0)).current;
 
   return (
-    <SafeAreaView style={styles.background} edges={["left", "right"]}>
-      <LinearGradient
-        colors={["#140505", "#0d0b10", "#280f0f"]}
-        style={{ ...styles.background, paddingTop: 32, paddingHorizontal: 8 }}
-        start={{ x: 0, y: 0.25 }}
-        end={{ x: 1, y: 1 }}
-        locations={[0.0, 0.45, 1]}
-      >
+    <LinearGradient
+      colors={["#140505", "#0d0b10", "#280f0f"]}
+      style={{ ...styles.background }}
+      start={{ x: 0, y: 0.25 }}
+      end={{ x: 1, y: 1 }}
+      locations={[0.0, 0.45, 1]}
+    >
+      <SafeAreaView style={styles.background} edges={["top", "left", "right"]}>
         {children}
-      </LinearGradient>
-    </SafeAreaView>
+      </SafeAreaView>
+    </LinearGradient>
   );
 }
 
@@ -30,5 +30,6 @@ const styles = StyleSheet.create({
     flex: 1,
     height: "100%",
     width: "100%",
+    paddingTop: 4,
   },
 });

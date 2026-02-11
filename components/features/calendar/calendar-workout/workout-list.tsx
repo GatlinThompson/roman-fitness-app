@@ -359,6 +359,7 @@ const styles = StyleSheet.create({
     marginHorizontal: -8,
     borderWidth: 2,
     borderTopColor: color.blackBackground.borderColor,
+    paddingHorizontal: 8,
   },
   carouselWrapper: {
     flex: 1,

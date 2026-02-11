@@ -15,6 +15,7 @@ export default function TabLayout() {
       screenOptions={{
         tabBarActiveTintColor: Colors[colorScheme ?? "light"].tint,
         headerShown: false,
+        animation: "fade",
         sceneStyle: {
           backgroundColor: "#140505",
         },

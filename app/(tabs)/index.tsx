@@ -14,7 +14,7 @@ export default function HomeScreen() {
   return (
     <ContainerView>
       <ScrollView
-        style={{ flex: 1 }}
+        style={{ flex: 1, paddingHorizontal: 8 }}
         contentContainerStyle={{ gap: 20 }}
         stickyHeaderIndices={[0]}
       >
