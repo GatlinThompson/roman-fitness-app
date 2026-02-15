@@ -1,4 +1,5 @@
 import { color } from "@/styles/color";
+import { getDate, getWeekDay } from "@/utils/get-date";
 import { getDateString } from "@/utils/get-today";
 import { StyleSheet, Text, View } from "react-native";
 
@@ -22,15 +23,9 @@ export default function SelectedDate({ date }: SelectedDateProps) {
   const [year, month, day] = normalizedDate.split("-").map(Number);
   const dateObj = new Date(year, month - 1, day);
 
-  const formattedDate = dateObj.toLocaleString("default", {
-    month: "long",
-    day: "numeric",
-    year: "numeric",
-  });
+  const formattedDate = getDate(date as string);
 
-  const weekDay = dateObj.toLocaleString("default", {
-    weekday: "long",
-  });
+  const weekDay = getWeekDay(date as string);
 
   const dayIndex = dateObj.getDay();
   const liftDay = liftDays[dayIndex];

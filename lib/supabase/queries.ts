@@ -44,3 +44,18 @@ export async function getWorkoutDatesForMonth(
     return [];
   }
 }
+
+export const getWorkout = async (date: string) => {
+  const { data, error } = await supabase
+    .from("workouts")
+    .select("*, workout_lifts(sequence, lift(*, superset(*)))")
+    .eq("workout_date", date)
+    .order("sequence", {
+      foreignTable: "workout_lifts",
+      ascending: true,
+    })
+    .single();
+
+  if (error) throw error;
+  return data;
+};

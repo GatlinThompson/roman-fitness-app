@@ -14,7 +14,7 @@ export const color = StyleSheet.create({
     color: "#8d8d8d",
   },
   nested: {
-    color: "#1e1e20",
+    color: "#1c1c1c33",
   },
   darkBackground: {
     backgroundColor: "#1c1c1c33",

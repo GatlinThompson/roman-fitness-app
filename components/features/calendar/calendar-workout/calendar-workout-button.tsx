@@ -1,33 +1,45 @@
 import { color } from "@/styles/color";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
-import { router } from "expo-router";
-import { StyleSheet, TouchableOpacity, View } from "react-native";
+import { Link } from "expo-router";
+import { StyleSheet, View } from "react-native";
 
 const HEIGHT = 45;
 
 type CalendarWorkoutButtonProps = {
   editMode: boolean;
   date: string;
+  id?: number;
 };
 
 export default function CalendarWorkoutButton({
   editMode,
   date,
+  id,
 }: CalendarWorkoutButtonProps) {
   const isSunday = new Date(date + "T00:00:00").getDay() === 0;
+
+  console.log(
+    "CalendarWorkoutButton - editMode:",
+    editMode,
+    "date:",
+    date,
+    "id:",
+    id,
+  );
 
   if (isSunday) {
     return null; // Don't render the button on Sundays
   }
 
-  const text = editMode ? "Edit" : "Create";
-
-  const handlePress = () => {
-    router.push("/dashboard/create_workout");
-  };
+  const linkHref: any = editMode
+    ? {
+        pathname: "/dashboard/[workoutId]?date=" + date,
+        params: { workoutId: id?.toString() },
+      }
+    : `/dashboard/create_workout?date=${date}`;
 
   return (
-    <TouchableOpacity style={styles.container} onPress={handlePress}>
+    <Link style={styles.container} href={linkHref}>
       <View style={styles.circle}>
         <MaterialIcons
           name={editMode ? "edit" : "add"}
@@ -35,7 +47,7 @@ export default function CalendarWorkoutButton({
           color={color.blackFillBackground.backgroundColor}
         />
       </View>
-    </TouchableOpacity>
+    </Link>
   );
 }
 

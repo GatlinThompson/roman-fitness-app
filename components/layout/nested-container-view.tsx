@@ -19,7 +19,7 @@ export default function NestedContainerView({
 
 const styles = StyleSheet.create({
   background: {
-    backgroundColor: color.nested.color,
+    backgroundColor: color.blackFillBackground.backgroundColor,
     flex: 1,
     height: "100%",
     width: "100%",
