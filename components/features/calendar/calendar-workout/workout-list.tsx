@@ -64,11 +64,7 @@ export default function WorkoutList() {
 
   // Refs for animation state
   const pan = useRef(new Animated.Value(0)).current;
-  const baseHeight = useRef(new Animated.Value(0)).current;
-  const toggleHeight = useRef(new Animated.Value(0)).current;
   const isAnimating = useRef(false);
-  const [layoutHeight, setLayoutHeight] = useState<number | null>(null);
-  const [isExpanded, setIsExpanded] = useState(false);
   const [prevWorkout, setPrevWorkout] = useState<
     { workout: any[]; id?: number } | undefined
   >(undefined);
@@ -110,7 +106,8 @@ export default function WorkoutList() {
       toValue: targetValue,
       duration: ANIMATION_DURATION,
       useNativeDriver: true,
-    }).start(() => {
+    }).start(({ finished }) => {
+      if (!finished) return;
       // Reset position after animation completes
       requestAnimationFrame(() => {
         pan.setValue(0);

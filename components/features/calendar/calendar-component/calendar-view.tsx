@@ -82,7 +82,8 @@ export default function CalendarNew() {
         duration: ANIMATION_DURATION,
         easing: EASING,
         useNativeDriver: true,
-      }).start(() => {
+      }).start(({ finished }) => {
+        if (!finished) return;
         // Update state FIRST (while still off-screen)
         dispatch(transitionAction);
         dispatch(updateAction);
