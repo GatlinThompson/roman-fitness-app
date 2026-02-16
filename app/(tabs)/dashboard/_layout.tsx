@@ -15,6 +15,7 @@ export default function DashboardLayout() {
         name="[workoutId]"
         options={{
           headerShown: false,
+
           presentation: "modal",
         }}
       />
