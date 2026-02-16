@@ -1,7 +1,9 @@
 import Spinner from "@/components/ui/spinner";
+import { createWorkout, updateWorkout } from "@/lib/supabase/queries";
 import { color } from "@/styles/color";
+import { useQueryClient } from "@tanstack/react-query";
 import { router } from "expo-router";
-import { useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import {
   Alert,
   Pressable,
@@ -24,14 +26,19 @@ export default function LiftForm({
   initialDate,
   initialLifts,
 }: Props) {
+  const queryClient = useQueryClient();
   const [loading, setLoading] = useState(false);
   const [date, setDate] = useState(initialDate || "");
   const [lifts, setLifts] = useState(initialLifts || []);
   const [removedLifts, setRemovedLifts] = useState<number[]>([]);
 
-  const isEditing = !!workoutId;
+  const isEditing = useMemo(() => !!workoutId, [workoutId]);
+  const canSubmit = useMemo(
+    () => !loading && date && lifts.length > 0,
+    [loading, date, lifts],
+  );
 
-  const handleSubmit = async () => {
+  const handleSubmit = useCallback(async () => {
     if (!date) {
       Alert.alert("Error", "Please select a date");
       return;
@@ -45,34 +52,25 @@ export default function LiftForm({
     setLoading(true);
 
     try {
-      const url = isEditing ? `/api/lifts/${workoutId}` : "/api/lifts";
-      const method = isEditing ? "PUT" : "POST";
-
-      const res = await fetch(url, {
-        method,
-        body: JSON.stringify({
-          date,
-          lifts,
-          removed_lifts: removedLifts,
-        }),
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-
-      if (res.ok) {
-        router.push("/dashboard");
+      if (isEditing && workoutId) {
+        await updateWorkout(workoutId, lifts, date, removedLifts);
+        // Invalidate the query to refetch updated data
+        queryClient.invalidateQueries({
+          queryKey: ["workout", workoutId, date],
+        });
       } else {
-        const error = await res.json();
-        Alert.alert("Error", error.error || "Failed to save workout");
+        await createWorkout(lifts, date);
       }
+      router.push("/(tabs)/dashboard");
     } catch (err) {
-      Alert.alert("Error", "Failed to save workout");
+      const errorMessage =
+        err instanceof Error ? err.message : "Failed to save workout";
+      Alert.alert("Error", errorMessage);
       console.error(err);
     } finally {
       setLoading(false);
     }
-  };
+  }, [isEditing, workoutId, lifts, date, removedLifts, queryClient]);
 
   return (
     <ScrollView style={styles.container}>
@@ -86,9 +84,9 @@ export default function LiftForm({
         />
 
         <Pressable
-          style={[styles.button, loading && styles.buttonDisabled]}
+          style={[styles.button, !canSubmit && styles.buttonDisabled]}
           onPress={handleSubmit}
-          disabled={loading}
+          disabled={!canSubmit}
         >
           {loading ? (
             <Spinner size={24} />

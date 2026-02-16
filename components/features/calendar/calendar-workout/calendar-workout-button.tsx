@@ -18,15 +18,6 @@ export default function CalendarWorkoutButton({
 }: CalendarWorkoutButtonProps) {
   const isSunday = new Date(date + "T00:00:00").getDay() === 0;
 
-  console.log(
-    "CalendarWorkoutButton - editMode:",
-    editMode,
-    "date:",
-    date,
-    "id:",
-    id,
-  );
-
   if (isSunday) {
     return null; // Don't render the button on Sundays
   }

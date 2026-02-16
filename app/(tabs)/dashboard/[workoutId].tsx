@@ -1,16 +1,11 @@
 import EditWorkout from "@/components/features/workout/forms/edit-workout";
 import BackButton from "@/components/layout/back-button";
 import NestedContainerView from "@/components/layout/nested-container-view";
-import { getDate } from "@/utils/get-date";
 import { useLocalSearchParams } from "expo-router";
 import { StyleSheet, Text, View } from "react-native";
 
 export default function WorkoutDetails() {
   const { workoutId, date } = useLocalSearchParams();
-  console.log("workoutId:", workoutId);
-  console.log("date:", date);
-
-  const formattedDate = getDate(date as string);
 
   return (
     <NestedContainerView>
@@ -28,6 +23,7 @@ export default function WorkoutDetails() {
 const styles = StyleSheet.create({
   container: {
     position: "relative",
+    marginBottom: 24,
   },
   title: {
     color: "white",

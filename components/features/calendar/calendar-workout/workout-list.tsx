@@ -228,8 +228,6 @@ export default function WorkoutList() {
   const getWorkoutForDate = async (date: string) => {
     // No need for artificial delay, rely on real-time data fetching
     const normalizedDate = getDateString(date);
-    console.log("DATE STRING:", normalizedDate);
-    console.warn("Fetching workout for date:", normalizedDate);
 
     const { data, error } = await supabase
       .from("workouts")

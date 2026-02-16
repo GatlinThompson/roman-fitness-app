@@ -1,9 +1,9 @@
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
-import { useCallback, useEffect, useState } from "react";
+import { memo, useCallback, useEffect, useMemo, useState } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import LiftInput from "./LiftInput";
 
-type LiftRow = { id: string; data?: any; liftData?: any };
+type LiftRow = { id: string; data?: any; liftData?: any; sequence?: number };
 
 const makeId = () => {
   return Math.random().toString(36).substring(2, 11);
@@ -15,7 +15,7 @@ type Props = {
   onRemovedLiftsChange?: (ids: number[]) => void;
 };
 
-export default function LiftInputGroup({
+function LiftInputGroup({
   initialLifts,
   onLiftsChange,
   onRemovedLiftsChange,
@@ -28,36 +28,45 @@ export default function LiftInputGroup({
     return [{ id: makeId() }];
   });
 
-  useEffect(() => {
-    // Format lifts data for submission with debounce to prevent infinite loops
-    const timeoutId = setTimeout(() => {
-      const formattedLifts = lifts.map((lift) => ({
+  const formattedLifts = useMemo(
+    () =>
+      lifts.map((lift, index) => ({
         lift: lift.liftData || {
           exercise: "",
           reps: "",
           tempo: "",
           superSet: null,
         },
-      }));
+        sequence: lift.sequence || index + 1,
+      })),
+    [lifts],
+  );
+
+  useEffect(() => {
+    // Format lifts data for submission with debounce to prevent infinite loops (200ms)
+    const timeoutId = setTimeout(() => {
       onLiftsChange?.(formattedLifts);
-    }, 100);
+    }, 200);
     return () => clearTimeout(timeoutId);
-  }, [lifts]);
+  }, [formattedLifts, onLiftsChange]);
 
   useEffect(() => {
     const timeoutId = setTimeout(() => {
       onRemovedLiftsChange?.(removedLiftIds);
-    }, 100);
+    }, 200);
     return () => clearTimeout(timeoutId);
-  }, [removedLiftIds]);
+  }, [removedLiftIds, onRemovedLiftsChange]);
 
-  const handleLiftDataChange = useCallback((index: number, liftData: any) => {
-    setLifts((prev) => {
-      const updated = [...prev];
-      updated[index] = { ...updated[index], liftData };
-      return updated;
-    });
-  }, []);
+  const handleLiftDataChange = useCallback(
+    (index: number, liftData: any, sequence: number) => {
+      setLifts((prev) => {
+        const updated = [...prev];
+        updated[index] = { ...updated[index], liftData, sequence };
+        return updated;
+      });
+    },
+    [],
+  );
 
   const removeLift = (id: string) => {
     if (initialLifts && initialLifts.length > 0) {
@@ -132,7 +141,7 @@ export default function LiftInputGroup({
           <LiftInput
             sequence={index + 1}
             initialData={lift.data}
-            onDataChange={(data) => handleLiftDataChange(index, data)}
+            onDataChange={(data, seq) => handleLiftDataChange(index, data, seq)}
           />
         </View>
       ))}
@@ -144,6 +153,8 @@ export default function LiftInputGroup({
     </View>
   );
 }
+
+export default memo(LiftInputGroup);
 
 const styles = StyleSheet.create({
   liftContainer: {

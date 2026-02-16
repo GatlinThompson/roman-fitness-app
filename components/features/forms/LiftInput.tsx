@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { memo, useCallback, useEffect, useMemo, useState } from "react";
 import { StyleSheet, Switch, Text, TextInput, View } from "react-native";
 
 type LiftFields = {
@@ -18,25 +18,24 @@ type Props = {
   initialData?: {
     lift: LiftInputValue;
   };
-  onDataChange?: (data: LiftInputValue) => void;
+  onDataChange?: (data: LiftInputValue, sequence: number) => void;
 };
 
-export default function LiftInput({
-  sequence,
-  initialData,
-  onDataChange,
-}: Props) {
+function LiftInput({ sequence, initialData, onDataChange }: Props) {
   const [liftObject, setLiftObject] = useState<LiftInputValue>(() => {
     if (initialData?.lift) {
+      // Handle both superSet (camelCase) and superset (snake_case) from database
+      const liftData = initialData.lift as any;
+      const supersetData = liftData.superSet || liftData.superset;
       return {
-        exercise: initialData.lift.exercise || "",
-        reps: initialData.lift.reps || "",
-        tempo: initialData.lift.tempo || "",
-        superSet: initialData.lift.superSet
+        exercise: liftData.exercise || "",
+        reps: liftData.reps || "",
+        tempo: liftData.tempo || "",
+        superSet: supersetData
           ? {
-              exercise: initialData.lift.superSet.exercise || "",
-              reps: initialData.lift.superSet.reps || "",
-              tempo: initialData.lift.superSet.tempo || "",
+              exercise: supersetData.exercise || "",
+              reps: supersetData.reps || "",
+              tempo: supersetData.tempo || "",
             }
           : null,
       };
@@ -47,8 +46,16 @@ export default function LiftInput({
     };
   });
 
+  const hasSuperSet = useMemo(
+    () => !!liftObject.superSet,
+    [liftObject.superSet],
+  );
+
   const [superSetEnabled, setSuperSetEnabled] = useState(
-    !!initialData?.lift?.superSet,
+    !!(
+      (initialData?.lift as any)?.superSet ||
+      (initialData?.lift as any)?.superset
+    ),
   );
 
   useEffect(() => {
@@ -59,25 +66,25 @@ export default function LiftInput({
   }, [superSetEnabled]);
 
   useEffect(() => {
-    // Debounce to prevent infinite update loops
+    // Debounce to prevent infinite update loops (200ms for better performance)
     const timeoutId = setTimeout(() => {
-      onDataChange?.(liftObject);
-    }, 50);
+      onDataChange?.(liftObject, sequence);
+    }, 200);
     return () => clearTimeout(timeoutId);
-  }, [liftObject]);
+  }, [liftObject, sequence, onDataChange]);
 
-  const updateMain = (key: keyof LiftFields, value: string) => {
+  const updateMain = useCallback((key: keyof LiftFields, value: string) => {
     setLiftObject((prev) => ({ ...prev, [key]: value }));
-  };
+  }, []);
 
-  const updateSuper = (key: keyof LiftFields, value: string) => {
+  const updateSuper = useCallback((key: keyof LiftFields, value: string) => {
     setLiftObject((prev) => ({
       ...prev,
       superSet: prev.superSet
         ? { ...prev.superSet, [key]: value }
         : prev.superSet,
     }));
-  };
+  }, []);
 
   return (
     <View>
@@ -102,7 +109,7 @@ export default function LiftInput({
             onChangeText={(value) => updateMain("reps", value)}
             placeholder="Reps"
             placeholderTextColor="rgba(255, 255, 255, 0.5)"
-            keyboardType="number-pad"
+            keyboardType="numbers-and-punctuation"
           />
         </View>
 
@@ -133,7 +140,7 @@ export default function LiftInput({
       </View>
 
       {/* Superset fields */}
-      {superSetEnabled && liftObject.superSet && (
+      {superSetEnabled && hasSuperSet && liftObject.superSet && (
         <View style={styles.supersetContainer}>
           <Text style={styles.supersetTitle}>Superset Lift</Text>
 
@@ -141,7 +148,7 @@ export default function LiftInput({
             <Text style={styles.label}>Superset Exercise</Text>
             <TextInput
               style={styles.input}
-              value={liftObject.superSet.exercise}
+              value={liftObject.superSet!.exercise}
               onChangeText={(value) => updateSuper("exercise", value)}
               placeholder="Exercise Name"
               placeholderTextColor="rgba(255, 255, 255, 0.5)"
@@ -153,11 +160,11 @@ export default function LiftInput({
               <Text style={styles.label}>Superset Reps</Text>
               <TextInput
                 style={styles.input}
-                value={liftObject.superSet.reps}
+                value={liftObject.superSet!.reps}
                 onChangeText={(value) => updateSuper("reps", value)}
                 placeholder="Superset Reps"
                 placeholderTextColor="rgba(255, 255, 255, 0.5)"
-                keyboardType="number-pad"
+                keyboardType="numbers-and-punctuation"
               />
             </View>
 
@@ -165,7 +172,7 @@ export default function LiftInput({
               <Text style={styles.label}>Superset Tempo</Text>
               <TextInput
                 style={styles.input}
-                value={liftObject.superSet.tempo}
+                value={liftObject.superSet!.tempo}
                 onChangeText={(value) => updateSuper("tempo", value)}
                 placeholder="Superset Tempo"
                 placeholderTextColor="rgba(255, 255, 255, 0.5)"
@@ -177,6 +184,8 @@ export default function LiftInput({
     </View>
   );
 }
+
+export default memo(LiftInput);
 
 const styles = StyleSheet.create({
   inputGroup: {
