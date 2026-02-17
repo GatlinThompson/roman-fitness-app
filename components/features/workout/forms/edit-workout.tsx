@@ -1,7 +1,8 @@
+import Spinner from "@/components/ui/spinner";
 import { getWorkout } from "@/lib/supabase/queries";
 import { useQuery } from "@tanstack/react-query";
 import { memo } from "react";
-import { ActivityIndicator, StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text, View } from "react-native";
 import LiftForm from "../../forms/LiftForm";
 
 function EditWorkout({ date, id }: { date: string; id: number }) {
@@ -15,7 +16,7 @@ function EditWorkout({ date, id }: { date: string; id: number }) {
   if (isLoading) {
     return (
       <View style={styles.centerContainer}>
-        <ActivityIndicator size="large" color="#64B5FF" />
+        <Spinner />
         <Text style={styles.loadingText}>Loading workout...</Text>
       </View>
     );

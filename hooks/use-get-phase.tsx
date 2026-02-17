@@ -15,7 +15,7 @@ export function useGetPhase() {
   const [phase, setPhase] = useState<Phase | null>(null);
 
   const fetchPhase = async () => {
-    const today = "2026-01-26";
+    const today = new Date().toISOString().split("T")[0]; // Get today's date in YYYY-MM-DD format
     const { data, error } = await supabase
       .from("phase_management")
       .select("phase(level, phase_number, percentage), start_date, end_date")

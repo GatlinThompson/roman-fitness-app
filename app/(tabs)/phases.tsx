@@ -1,29 +1,12 @@
-import { StyleSheet } from "react-native";
+import { StyleSheet, Text } from "react-native";
 
-import ParallaxScrollView from "@/components/parallax-scroll-view";
-import { ThemedText } from "@/components/themed-text";
-import { ThemedView } from "@/components/themed-view";
-import { Fonts } from "@/constants/theme";
-import AntDesign from "@expo/vector-icons/AntDesign";
+import ContainerView from "@/components/layout/container-view";
 
 export default function phases() {
   return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: "#8f3434", dark: "#63124f" }}
-      headerImage={<AntDesign name="aim" size={310} color="#058226" />}
-    >
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText
-          type="title"
-          style={{
-            fontFamily: Fonts.rounded,
-          }}
-        >
-          Phases
-        </ThemedText>
-      </ThemedView>
-      <ThemedText>This is the phases screen.</ThemedText>
-    </ParallaxScrollView>
+    <ContainerView>
+      <Text style={styles.title}>Phase Management</Text>
+    </ContainerView>
   );
 }
 const styles = StyleSheet.create({
@@ -36,5 +19,10 @@ const styles = StyleSheet.create({
   titleContainer: {
     flexDirection: "row",
     gap: 8,
+  },
+  title: {
+    color: "white",
+    fontSize: 24,
+    fontWeight: "bold",
   },
 });
