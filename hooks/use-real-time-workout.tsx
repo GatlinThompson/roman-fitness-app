@@ -115,7 +115,7 @@ export function useRealtimeWorkout({
         isFetchingRef.current = false;
       }
     }, 300);
-  }, [supabase, workout_date]);
+  }, [workout_date]);
 
   // Initial data fetch on mount
   useEffect(() => {
@@ -142,7 +142,6 @@ export function useRealtimeWorkout({
           event: "*",
           schema: "public",
           table: "workout_lifts",
-          filter: `workout=eq.${workoutId}`,
         },
         () => {
           updateWorkoutData();
