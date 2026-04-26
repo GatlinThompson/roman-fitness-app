@@ -1,11 +1,24 @@
 import { Tabs } from "expo-router";
 import React from "react";
+import { ViewStyle } from "react-native";
 
 import { HapticTab } from "@/components/haptic-tab";
 import { Colors } from "@/constants/theme";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+
+export const tabBarStyles: ViewStyle = {
+  position: "absolute",
+  backgroundColor: "#0F0E0E",
+  borderRadius: 4,
+  marginBottom: 32 + 24,
+  marginHorizontal: 16,
+  paddingTop: 8,
+  height: 52,
+  borderWidth: 1,
+  borderColor: "#262525",
+};
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
@@ -17,16 +30,10 @@ export default function TabLayout() {
         headerShown: false,
         animation: "fade",
         sceneStyle: {
-          backgroundColor: "#140505",
+          backgroundColor: "transparent",
         },
         tabBarButton: HapticTab,
-        tabBarStyle: {
-          backgroundColor: "#0a0707",
-          paddingRight: 8,
-          paddingLeft: 8,
-          paddingTop: 6,
-          marginBottom: 32,
-        },
+        tabBarStyle: tabBarStyles,
       }}
     >
       <Tabs.Screen

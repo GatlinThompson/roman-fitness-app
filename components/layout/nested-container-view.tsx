@@ -1,4 +1,3 @@
-import { color } from "@/styles/color";
 import React from "react";
 import { StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -19,7 +18,7 @@ export default function NestedContainerView({
 
 const styles = StyleSheet.create({
   background: {
-    backgroundColor: color.blackFillBackground.backgroundColor,
+    backgroundColor: "#161616",
     flex: 1,
     height: "100%",
     width: "100%",

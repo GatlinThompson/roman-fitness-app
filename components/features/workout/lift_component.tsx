@@ -1,4 +1,5 @@
 import { color } from "@/styles/color";
+import { font } from "@/styles/fonts";
 import React from "react";
 import { StyleSheet, Text, View } from "react-native";
 
@@ -12,17 +13,21 @@ type Lift = {
 const styles = StyleSheet.create({
   text: {
     color: color.foreground.color,
-    fontSize: 18,
-    fontWeight: "bold",
   },
   textSuperset: {
     color: color.secondary.color,
-    fontSize: 18,
-    fontWeight: "bold",
+  },
+  exercise: {
+    fontSize: 24,
+    fontFamily: font.montserratBold.fontFamily,
+    fontWeight: font.montserratBold.fontWeight,
+    marginBottom: 6,
   },
   description: {
     color: color.darkForeground.color,
-    fontSize: 18,
+    fontSize: 16,
+    fontFamily: font.montserratSemiBold.fontFamily,
+    fontWeight: font.montserratSemiBold.fontWeight,
   },
 });
 
@@ -37,12 +42,12 @@ export default function LiftComponent({
 
   return (
     <View style={{ display: "flex", flexDirection: "column", flex: 1 }}>
-      <Text style={textStyle}>{lift.exercise}</Text>
+      <Text style={[textStyle, styles.exercise]}>{lift.exercise}</Text>
       <View
         style={{
           display: "flex",
           flexDirection: "row",
-          gap: 16,
+          gap: 28,
         }}
       >
         <Text style={styles.description}>

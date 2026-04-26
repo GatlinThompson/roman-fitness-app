@@ -1,5 +1,6 @@
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import { store } from "@/store";
+import { useMontserratFonts } from "@/styles/fonts";
 import {
   DarkTheme,
   DefaultTheme,
@@ -20,6 +21,8 @@ const queryClient = new QueryClient();
 
 export default function RootLayout() {
   const colorScheme = useColorScheme();
+
+  useMontserratFonts();
 
   return (
     <QueryClientProvider client={queryClient}>

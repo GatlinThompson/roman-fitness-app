@@ -1,24 +1,34 @@
-import { Stack } from "expo-router";
+import { Stack, Tabs, usePathname } from "expo-router";
+import { tabBarStyles } from "../_layout";
 
 export default function DashboardLayout() {
-  return (
-    <Stack screenOptions={{ headerShown: false, animation: "simple_push" }}>
-      <Stack.Screen name="index" options={{ headerShown: false }} />
-      <Stack.Screen
-        name="create_workout"
-        options={{
-          headerShown: false,
-          presentation: "modal",
-        }}
-      />
-      <Stack.Screen
-        name="[workoutId]"
-        options={{
-          headerShown: false,
+  const pathname = usePathname();
+  const hideTabBar = pathname.startsWith("/dashboard/");
 
-          presentation: "modal",
+  return (
+    <>
+      <Tabs.Screen
+        options={{
+          tabBarStyle: hideTabBar ? { display: "none" } : tabBarStyles,
         }}
       />
-    </Stack>
+      <Stack screenOptions={{ headerShown: false, animation: "simple_push" }}>
+        <Stack.Screen name="index" options={{ headerShown: false }} />
+        <Stack.Screen
+          name="create_workout"
+          options={{
+            headerShown: false,
+            presentation: "modal",
+          }}
+        />
+        <Stack.Screen
+          name="[workoutId]"
+          options={{
+            headerShown: false,
+            presentation: "modal",
+          }}
+        />
+      </Stack>
+    </>
   );
 }

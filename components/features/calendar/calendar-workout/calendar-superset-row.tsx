@@ -21,9 +21,9 @@ export default function CalendarSuperSetRow({
     <View style={styles.container}>
       <View
         style={{
-          backgroundColor: color.secondary.color,
+          backgroundColor: "#a72b2b",
           height: "100%",
-          width: 4,
+          width: 8,
         }}
       />
       <View
@@ -45,7 +45,7 @@ const styles = StyleSheet.create({
   container: {
     display: "flex",
     flexDirection: "row",
-    gap: 12,
+    gap: 8,
     paddingHorizontal: 12,
     paddingVertical: 12,
   },

@@ -19,7 +19,6 @@ export function useRealtimeWorkout({
   workout_date,
   loadingFunction = false,
 }: useRealtimeWorkoutProps): UseRealtimeWorkoutReturn {
-  console.warn("workout_date:", workout_date);
   const [workout, setWorkout] = useState<(Lift | SuperSet)[]>([]);
   const [workoutId, setWorkoutId] = useState<string | number | undefined>(
     undefined,
@@ -71,8 +70,6 @@ export function useRealtimeWorkout({
             )}`;
           }
         }
-
-        console.warn("Fetching workout for date:", todayStr);
 
         const { data, error } = await supabase
           .from("workouts")

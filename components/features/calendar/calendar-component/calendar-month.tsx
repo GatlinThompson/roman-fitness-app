@@ -1,4 +1,5 @@
 import { color } from "@/styles/color";
+import { font } from "@/styles/fonts";
 import React, { useMemo } from "react";
 import { StyleSheet, Text, View } from "react-native";
 
@@ -17,15 +18,16 @@ function CalendarMonth({ month }: CalendarMonthProps) {
   const monthString = useMemo(() => {
     const dateObj =
       typeof month === "string" ? new Date(month + "T00:00:00") : month;
+    const isCurrentYear = dateObj.getFullYear() === new Date().getFullYear();
     return dateObj.toLocaleString("default", {
       month: "short",
-      year: "numeric",
+      ...(isCurrentYear ? {} : { year: "numeric" }),
     });
   }, [month]);
 
   return (
     <View style={styles.container}>
-      <Text style={styles.text}>{monthString}</Text>
+      <Text style={styles.text}>{monthString.toUpperCase()}</Text>
     </View>
   );
 }
@@ -41,7 +43,8 @@ const styles = StyleSheet.create({
   },
   text: {
     fontSize: 24,
-    fontWeight: "bold",
+    fontWeight: font.montserratBold.fontWeight,
+    fontFamily: font.montserratBold.fontFamily,
     color: color.foreground.color,
   },
 });

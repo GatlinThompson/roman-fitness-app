@@ -5,7 +5,7 @@ import ContainerView from "@/components/layout/container-view";
 
 export default function TabTwoScreen() {
   return (
-    <ContainerView>
+    <ContainerView bottomSpace={false}>
       <CalendarView />
       <WorkoutList />
     </ContainerView>

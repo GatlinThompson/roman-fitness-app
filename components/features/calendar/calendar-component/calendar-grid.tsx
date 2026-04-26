@@ -37,7 +37,7 @@ export default function CalendarGrid({ month }: CalendarGridProps) {
   // Calculate total number of rows needed
   const totalCells = emptyCells.length + daysInMonth.length;
   const totalRows = Math.ceil(totalCells / 7);
-  const GRID_HEIGHT = 250; // Fixed height for the grid
+  const GRID_HEIGHT = 230; // Fixed height for the grid
   const cellHeight = GRID_HEIGHT / totalRows;
 
   return (

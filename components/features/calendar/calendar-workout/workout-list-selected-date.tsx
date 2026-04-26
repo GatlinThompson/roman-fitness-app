@@ -1,4 +1,5 @@
 import { color } from "@/styles/color";
+import { font } from "@/styles/fonts";
 import { getDate, getWeekDay } from "@/utils/get-date";
 import { getDateString } from "@/utils/get-today";
 import { StyleSheet, Text, View } from "react-native";
@@ -32,10 +33,10 @@ export default function SelectedDate({ date }: SelectedDateProps) {
 
   return (
     <View style={styles.container}>
+      <Text style={styles.text}>{formattedDate}</Text>
       <Text style={styles.weekday}>
         {weekDay} | {liftDay} Day
       </Text>
-      <Text style={styles.text}>{formattedDate}</Text>
     </View>
   );
 }
@@ -47,13 +48,14 @@ const styles = StyleSheet.create({
   },
   text: {
     fontSize: 20,
-    fontWeight: "500",
-
+    fontWeight: font.montserratSemiBold.fontWeight,
+    fontFamily: font.montserratSemiBold.fontFamily,
     color: color.foreground.color,
   },
   weekday: {
-    fontSize: 16,
-    fontWeight: "400",
+    fontSize: 14,
+    fontWeight: font.montserratRegular.fontWeight,
+    fontFamily: font.montserratRegular.fontFamily,
     color: color.darkForeground.color,
     marginBottom: 0,
   },

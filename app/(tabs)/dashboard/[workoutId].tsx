@@ -10,7 +10,14 @@ export default function WorkoutDetails() {
   return (
     <NestedContainerView>
       <View style={styles.container}>
-        <View style={{ flexDirection: "row", alignItems: "center", gap: 16 }}>
+        <View
+          style={{
+            flexDirection: "row",
+            alignItems: "center",
+            gap: 16,
+            marginTop: 16,
+          }}
+        >
           <BackButton />
           <Text style={styles.title}>Edit Workout</Text>
         </View>

@@ -1,4 +1,3 @@
-import { color } from "@/styles/color";
 import React from "react";
 import { View } from "react-native";
 import CalendarLiftComponent from "./calendar-lift-component";
@@ -17,14 +16,14 @@ export default function CalendarLiftRow({ lift }: { lift: Lift }) {
         paddingHorizontal: 12,
         paddingVertical: 8,
         flexDirection: "row",
-        gap: 12,
+        gap: 8,
       }}
     >
       <View
         style={{
-          backgroundColor: color.foreground.color,
+          backgroundColor: "#a72b2b",
           height: "100%",
-          width: 4,
+          width: 8,
         }}
       />
       <CalendarLiftComponent lift={lift} />

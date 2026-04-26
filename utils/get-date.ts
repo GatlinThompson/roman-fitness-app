@@ -4,10 +4,11 @@ export const getDate = (dateStr: string | undefined | null) => {
   }
   const [year, month, day] = dateStr.split(/[-/]/).map(Number);
   const dateObj = new Date(year, month - 1, day);
+  const isCurrentYear = dateObj.getFullYear() === new Date().getFullYear();
   return dateObj.toLocaleString("default", {
     month: "long",
     day: "numeric",
-    year: "numeric",
+    ...(isCurrentYear ? {} : { year: "numeric" }),
   });
 };
 

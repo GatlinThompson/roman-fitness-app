@@ -15,7 +15,6 @@ import {
   setTransitionNextMonth,
   setTransitionPrevMonth,
 } from "@/store/slices/calendar-slices";
-import { color } from "@/styles/color";
 import { useDispatch, useSelector } from "react-redux";
 import Calendar from "./calendar";
 import CalendarMonth from "./calendar-month";
@@ -194,8 +193,9 @@ export default function CalendarNew() {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 6,
+    flex: 7,
     paddingHorizontal: 8,
+    marginTop: 48,
   },
   carouselWrapper: {
     flex: 1,
@@ -209,7 +209,7 @@ const styles = StyleSheet.create({
     width: SCREEN_WIDTH,
   },
   text: {
-    color: color.foreground.color,
+    color: "#161616",
     fontSize: 16,
     fontWeight: "600",
     textAlign: "center",

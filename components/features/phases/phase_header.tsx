@@ -1,8 +1,8 @@
 import { Phase, useGetPhase } from "@/hooks/use-get-phase";
 import { color } from "@/styles/color";
+import { font } from "@/styles/fonts";
 import { useImage } from "expo-image";
 import { StyleSheet, Text, View } from "react-native";
-import PhaseImage from "./phase_image";
 import PhaseWeek from "./phase_week";
 
 export default function PhaseHeader() {
@@ -11,7 +11,6 @@ export default function PhaseHeader() {
   const image = useImage(require("../../../assets/images/logo.png"));
   return (
     <View style={styles.container}>
-      <PhaseImage />
       <View
         style={{
           flexDirection: "row",
@@ -21,7 +20,7 @@ export default function PhaseHeader() {
       >
         <View>
           <Text style={styles.text}>
-            Phase {phase?.phase.phase_number ? phase.phase.phase_number : "1"}
+            Phases {phase?.phase.phase_number ? phase.phase.phase_number : "1"}
           </Text>
           <PhaseWeek phaseDate={phase?.start_date ? phase.start_date : null} />
         </View>
@@ -43,16 +42,20 @@ export default function PhaseHeader() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    borderRadius: 8,
-    backgroundColor: color.blackFillBackground.backgroundColor,
+    backgroundColor: "#0C090C",
     borderWidth: 1,
-    borderColor: color.blackBackground.borderColor,
-    padding: 12,
+    borderBottomColor: "#625E5E",
+
+    padding: 16,
+    paddingBottom: 20,
+    paddingTop: 48,
   },
   text: {
     color: color.foreground.color,
-    fontSize: 24,
-    fontWeight: "500",
+    fontSize: 32,
+    fontWeight: font.montserratBold.fontWeight,
+    fontFamily: font.montserratBold.fontFamily,
+    marginBottom: -4,
   },
   redText: {
     color: color.primary.color,
@@ -60,7 +63,9 @@ const styles = StyleSheet.create({
   },
   grayText: {
     color: color.darkForeground.color,
-    fontSize: 18,
-    fontWeight: "500",
+    fontSize: 16,
+    fontWeight: font.montserratSemiBold.fontWeight,
+    fontFamily: font.montserratSemiBold.fontFamily,
+    alignItems: "flex-end",
   },
 });

@@ -1,4 +1,5 @@
 import { color } from "@/styles/color";
+import { font } from "@/styles/fonts";
 import React from "react";
 import { StyleSheet, Text, View } from "react-native";
 
@@ -26,8 +27,6 @@ export default React.memo(CalendarWeek);
 const styles = StyleSheet.create({
   weekLabels: {
     flexDirection: "row",
-    marginBottom: 8,
-
     paddingLeft: 8,
   },
   weekLabelCell: {
@@ -39,8 +38,9 @@ const styles = StyleSheet.create({
     borderRadius: 4,
   },
   weekLabelText: {
-    fontSize: 14,
-    fontWeight: "700",
+    fontSize: 18,
+    fontWeight: font.montserratBold.fontWeight,
+    fontFamily: font.montserratBold.fontFamily,
     textAlign: "center",
     color: color.foreground.color,
   },

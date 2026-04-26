@@ -1,24 +1,45 @@
-import { color } from "@/styles/color";
-import { StyleSheet, View } from "react-native";
+import { useRef } from "react";
+import { PanResponder, StyleSheet, View } from "react-native";
 
-export default function ShowMoreToggle() {
+type ShowMoreToggleProps = {
+  onSwipeUp?: () => void;
+  onSwipeDown?: () => void;
+};
+
+const SWIPE_THRESHOLD = 20;
+
+export default function ShowMoreToggle({
+  onSwipeUp,
+  onSwipeDown,
+}: ShowMoreToggleProps) {
+  const panResponder = useRef(
+    PanResponder.create({
+      onMoveShouldSetPanResponder: (_, { dy, dx }) =>
+        Math.abs(dy) > Math.abs(dx) && Math.abs(dy) > 5,
+      onPanResponderRelease: (_, { dy }) => {
+        if (dy < -SWIPE_THRESHOLD) onSwipeUp?.();
+        else if (dy > SWIPE_THRESHOLD) onSwipeDown?.();
+      },
+    }),
+  ).current;
+
   return (
-    <View style={styles.container}>
-      <View
-        style={{
-          height: 4,
-          width: 100,
-          backgroundColor: color.darkForeground.color,
-          borderRadius: 2,
-          alignSelf: "center",
-        }}
-      />
+    <View style={styles.container} {...panResponder.panHandlers}>
+      <View style={styles.handle} />
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    height: 20,
+    height: 30,
+  },
+  handle: {
+    height: 9,
+    width: 104,
+    backgroundColor: "#E0E0E0",
+    borderBottomRightRadius: 122,
+    borderBottomLeftRadius: 122,
+    alignSelf: "center",
   },
 });

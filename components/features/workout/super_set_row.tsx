@@ -1,6 +1,6 @@
 import { color } from "@/styles/color";
 import React from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import LiftComponent from "./lift_component";
 import { Lift } from "./lift_row";
 
@@ -21,10 +21,10 @@ export default function SuperSetRow({
 }) {
   return (
     <View style={styles.container}>
-      <Text style={styles.supersetBadge}>SS</Text>
+      <View style={styles.badge} />
 
       <View
-        style={{ display: "flex", flexDirection: "column", flex: 1, gap: 16 }}
+        style={{ display: "flex", flexDirection: "column", flex: 1, gap: 8 }}
       >
         <LiftComponent lift={lift} />
         <LiftComponent lift={superset} superset={true} />
@@ -45,6 +45,11 @@ const styles = StyleSheet.create({
     gap: 8,
     paddingHorizontal: 12,
     paddingVertical: 8,
+  },
+  badge: {
+    width: 8,
+    height: "100%",
+    backgroundColor: "#a72b2b",
   },
   supersetBadge: {
     color: color.primary.color,

@@ -1,4 +1,5 @@
 import { color } from "@/styles/color";
+import { font } from "@/styles/fonts";
 import { StyleSheet, Text } from "react-native";
 
 export default function PhaseWeek({ phaseDate }: { phaseDate: string | null }) {
@@ -41,7 +42,7 @@ export default function PhaseWeek({ phaseDate }: { phaseDate: string | null }) {
     }
 
     const week = Math.ceil(workingDays / 6);
-    const day = workingDays % 6 === 0 ? 6 : workingDays % 6;
+    const day = workingDays % 7 === 0 ? 7 : workingDays % 6;
 
     return { week: Math.max(1, week), day: Math.max(1, day) };
   }
@@ -59,7 +60,8 @@ export default function PhaseWeek({ phaseDate }: { phaseDate: string | null }) {
 const styles = StyleSheet.create({
   text: {
     color: color.darkForeground.color,
-    fontSize: 18,
-    fontWeight: "500",
+    fontSize: 16,
+    fontFamily: font.montserratSemiBold.fontFamily,
+    fontWeight: font.montserratSemiBold.fontWeight,
   },
 });

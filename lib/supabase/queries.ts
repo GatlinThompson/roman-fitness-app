@@ -371,6 +371,122 @@ export const updateWorkout = async (
   }
 };
 
+export type PhaseEntry = {
+  id: string;
+  start_date: string;
+  end_date: string;
+  phase: {
+    level: string;
+    phase_number: number;
+    percentage: number;
+  };
+};
+
+export const getPhases = async (): Promise<PhaseEntry[]> => {
+  const { data, error } = await supabase
+    .from("phase_management")
+    .select("phase(level, phase_number, percentage), start_date, end_date, id")
+    .order("start_date", { ascending: true });
+
+  if (error) throw error;
+
+  return (data ?? []).map((item) => ({
+    ...item,
+    phase: Array.isArray(item.phase) ? item.phase[0] : item.phase,
+  }));
+};
+
+export const extendPhase = async (id: string): Promise<void> => {
+  const { data, error } = await supabase
+    .from("phase_management")
+    .select("id, end_date")
+    .eq("id", id);
+
+  if (error || !data || data.length === 0) throw new Error("Phase not found");
+
+  const newEndDate = new Date(data[0].end_date);
+  newEndDate.setDate(newEndDate.getDate() + 7);
+
+  const { error: updateError } = await supabase
+    .from("phase_management")
+    .update({ end_date: newEndDate.toISOString() })
+    .eq("id", id);
+
+  if (updateError) throw new Error("Failed to extend phase");
+
+  const { data: otherPhases, error: fetchError } = await supabase
+    .from("phase_management")
+    .select("id, start_date, end_date")
+    .neq("id", id);
+
+  if (fetchError) throw new Error("Failed to fetch other phases");
+  if (!otherPhases || otherPhases.length === 0) return;
+
+  await Promise.all(
+    otherPhases.map((phase) => {
+      const newStart = new Date(phase.start_date);
+      newStart.setDate(newStart.getDate() + 7);
+      const newEnd = new Date(phase.end_date);
+      newEnd.setDate(newEnd.getDate() + 7);
+      return supabase
+        .from("phase_management")
+        .update({
+          start_date: newStart.toISOString(),
+          end_date: newEnd.toISOString(),
+        })
+        .eq("id", phase.id);
+    }),
+  );
+};
+
+export const reducePhase = async (id: string): Promise<void> => {
+  const { data, error } = await supabase
+    .from("phase_management")
+    .select("id, start_date, end_date")
+    .eq("id", id);
+
+  if (error || !data || data.length === 0) throw new Error("Phase not found");
+
+  const phase = data[0];
+  const newEndDate = new Date(phase.end_date);
+  newEndDate.setDate(newEndDate.getDate() - 7);
+
+  if (newEndDate <= new Date(phase.start_date)) {
+    throw new Error("End date cannot be before or equal to start date");
+  }
+
+  const { error: updateError } = await supabase
+    .from("phase_management")
+    .update({ end_date: newEndDate.toISOString() })
+    .eq("id", id);
+
+  if (updateError) throw new Error("Failed to reduce phase");
+
+  const { data: otherPhases, error: fetchError } = await supabase
+    .from("phase_management")
+    .select("id, start_date, end_date")
+    .neq("id", id);
+
+  if (fetchError) throw new Error("Failed to fetch other phases");
+  if (!otherPhases || otherPhases.length === 0) return;
+
+  await Promise.all(
+    otherPhases.map((other) => {
+      const newStart = new Date(other.start_date);
+      newStart.setDate(newStart.getDate() - 7);
+      const newEnd = new Date(other.end_date);
+      newEnd.setDate(newEnd.getDate() - 7);
+      return supabase
+        .from("phase_management")
+        .update({
+          start_date: newStart.toISOString(),
+          end_date: newEnd.toISOString(),
+        })
+        .eq("id", other.id);
+    }),
+  );
+};
+
 export const deleteWorkout = async (workoutId: number) => {
   try {
     if (!workoutId) {

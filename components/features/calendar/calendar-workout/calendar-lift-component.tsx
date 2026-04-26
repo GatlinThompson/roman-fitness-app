@@ -1,4 +1,5 @@
 import { color } from "@/styles/color";
+import { font } from "@/styles/fonts";
 import React from "react";
 import { StyleSheet, Text, View } from "react-native";
 
@@ -12,17 +13,20 @@ type Lift = {
 const styles = StyleSheet.create({
   text: {
     color: color.foreground.color,
-    fontSize: 16,
-    fontWeight: "bold",
   },
   textSuperset: {
     color: color.secondary.color,
-    fontSize: 16,
-    fontWeight: "bold",
   },
   description: {
     color: color.darkForeground.color,
+    fontFamily: font.montserratRegular.fontFamily,
+    fontWeight: font.montserratRegular.fontWeight,
+    fontSize: 12,
+  },
+  exercise: {
     fontSize: 16,
+    fontWeight: font.montserratSemiBold.fontWeight,
+    fontFamily: font.montserratSemiBold.fontFamily,
   },
 });
 
@@ -37,7 +41,7 @@ export default function CalendarLiftComponent({
 
   return (
     <View style={{ display: "flex", flexDirection: "column", flex: 1 }}>
-      <Text style={textStyle}>{lift.exercise}</Text>
+      <Text style={[textStyle, styles.exercise]}>{lift.exercise}</Text>
       <View
         style={{
           display: "flex",

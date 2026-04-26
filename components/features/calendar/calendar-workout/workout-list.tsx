@@ -5,7 +5,6 @@ import {
   setTransitonPrevDay,
   updateBufferDates,
 } from "@/store/slices/calendar-slices";
-import { color } from "@/styles/color";
 import { getDateString } from "@/utils/get-today";
 import React, {
   useCallback,
@@ -31,7 +30,6 @@ const SWIPE_THRESHOLD = SCREEN_WIDTH * 0.25;
 const SWIPE_VELOCITY_THRESHOLD = 0.5;
 const ANIMATION_DURATION = 250;
 const SPRING_CONFIG = { tension: 65, friction: 8 };
-const TOGGLE_EXPANDED_HEIGHT = 180;
 
 // Types
 interface CalendarState {
@@ -65,6 +63,38 @@ export default function WorkoutList() {
   // Refs for animation state
   const pan = useRef(new Animated.Value(0)).current;
   const isAnimating = useRef(false);
+
+  // Expand/collapse state
+  const [expanded, setExpanded] = useState(false);
+  const expandedRef = useRef(false);
+  const topAnim = useRef(new Animated.Value(0)).current;
+  const layoutYRef = useRef(0);
+
+  const handleLayout = useCallback((e: any) => {
+    if (!expandedRef.current) layoutYRef.current = e.nativeEvent.layout.y;
+  }, []);
+
+  const handleSwipeUp = useCallback(() => {
+    if (expandedRef.current) return;
+    topAnim.setValue(layoutYRef.current);
+    expandedRef.current = true;
+    setExpanded(true);
+    Animated.spring(topAnim, {
+      toValue: 50,
+      useNativeDriver: false,
+      ...SPRING_CONFIG,
+    }).start();
+  }, [topAnim]);
+
+  const handleSwipeDown = useCallback(() => {
+    if (!expandedRef.current) return;
+    expandedRef.current = false;
+    Animated.spring(topAnim, {
+      toValue: layoutYRef.current,
+      useNativeDriver: false,
+      ...SPRING_CONFIG,
+    }).start(() => setExpanded(false));
+  }, [topAnim]);
   const [prevWorkout, setPrevWorkout] = useState<
     { workout: any[]; id?: number } | undefined
   >(undefined);
@@ -173,6 +203,13 @@ export default function WorkoutList() {
       PanResponder.create({
         onMoveShouldSetPanResponder: (evt, gestureState) => {
           if (isAnimating.current) return false;
+          if (
+            expandedRef.current &&
+            gestureState.dy > 10 &&
+            Math.abs(gestureState.dy) > Math.abs(gestureState.dx)
+          ) {
+            return true;
+          }
           return (
             Math.abs(gestureState.dx) > Math.abs(gestureState.dy) &&
             Math.abs(gestureState.dx) > 10
@@ -180,12 +217,18 @@ export default function WorkoutList() {
         },
         onPanResponderMove: (_, gestureState) => {
           if (isAnimating.current) return;
-          pan.setValue(gestureState.dx);
+          if (!expandedRef.current) pan.setValue(gestureState.dx);
         },
         onPanResponderRelease: (_, gestureState) => {
           if (isAnimating.current) return;
 
-          const { dx, vx } = gestureState;
+          const { dx, vx, dy, vy } = gestureState;
+
+          // Swipe down to collapse when expanded
+          if (expandedRef.current && (dy > 50 || vy > 0.5)) {
+            handleSwipeDown();
+            return;
+          }
 
           // Swipe left -> next date
           if (dx < -SWIPE_THRESHOLD || vx < -SWIPE_VELOCITY_THRESHOLD) {
@@ -205,7 +248,7 @@ export default function WorkoutList() {
           }
         },
       }),
-    [executeSwipe, pan],
+    [executeSwipe, handleSwipeDown, pan],
   );
 
   /**
@@ -238,8 +281,6 @@ export default function WorkoutList() {
     if (error) {
       return;
     }
-
-    console.warn("Fetched workout data for date:", normalizedDate, data);
 
     const workoutLifts = data?.[0]?.workout_lifts || [];
 
@@ -332,8 +373,21 @@ export default function WorkoutList() {
   );
 
   return (
-    <Animated.View style={[styles.container]}>
-      <ShowMoreToggle />
+    <Animated.View
+      onLayout={handleLayout}
+      style={[
+        styles.container,
+        expanded && {
+          position: "absolute",
+          top: topAnim,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          zIndex: 100,
+        },
+      ]}
+    >
+      <ShowMoreToggle onSwipeUp={handleSwipeUp} onSwipeDown={handleSwipeDown} />
       <View style={styles.carouselWrapper} {...panResponder.panHandlers}>
         <Animated.View
           style={[styles.carouselContainer, { transform: [{ translateX }] }]}
@@ -349,11 +403,11 @@ export default function WorkoutList() {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 7,
-    backgroundColor: color.blackBackground.backgroundColor,
+    flex: 11,
+    backgroundColor: "#161616",
     marginHorizontal: -8,
-    borderWidth: 2,
-    borderTopColor: color.blackBackground.borderColor,
+    borderWidth: 1,
+    borderTopColor: "#E0E0E0",
     paddingHorizontal: 8,
   },
   carouselWrapper: {

@@ -1,5 +1,5 @@
+import BottomSpace from "@/components/layout/bottom-space";
 import Divider from "@/components/ui/divider";
-import GlassContainer from "@/components/ui/glass-container";
 import Spinner from "@/components/ui/spinner";
 import { useRealtimeWorkout } from "@/hooks/use-real-time-workout";
 import { color } from "@/styles/color";
@@ -51,6 +51,7 @@ export default function Workout() {
         >
           Loading...
         </Text>
+        <BottomSpace />
       </View>
     );
   }
@@ -75,47 +76,48 @@ export default function Workout() {
         >
           No workout scheduled for today.
         </Text>
+        <BottomSpace />
       </View>
     );
   }
 
   return (
-    <GlassContainer style={{ marginBottom: 32 }}>
-      <View style={styles.container}>
-        {workout.map((lift: any, index: number) => {
-          if (isSuperSet(lift.lift)) {
-            return (
-              <View key={index}>
-                <SuperSetRow
-                  superset={lift.lift.superset}
-                  lift={lift.lift}
-                  last={index === workout.length - 1}
-                />
-                {index !== workout.length - 1 && (
-                  <Divider style={{ marginVertical: 8 }} />
-                )}
-              </View>
-            );
-          } else {
-            return (
-              <View key={index}>
-                <LiftRow lift={lift.lift} last={index === workout.length - 1} />
-                {index !== workout.length - 1 && (
-                  <Divider style={{ marginVertical: 4 }} />
-                )}
-              </View>
-            );
-          }
-        })}
-      </View>
-    </GlassContainer>
+    <View style={styles.container}>
+      {workout.map((lift: any, index: number) => {
+        if (isSuperSet(lift.lift)) {
+          return (
+            <View key={index}>
+              <SuperSetRow
+                superset={lift.lift.superset}
+                lift={lift.lift}
+                last={index === workout.length - 1}
+              />
+              {index !== workout.length - 1 && (
+                <Divider style={{ marginVertical: 8 }} />
+              )}
+            </View>
+          );
+        } else {
+          return (
+            <View key={index}>
+              <LiftRow lift={lift.lift} last={index === workout.length - 1} />
+              {index !== workout.length - 1 && (
+                <Divider style={{ marginTop: 16 }} />
+              )}
+            </View>
+          );
+        }
+      })}
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    gap: 12,
-    paddingBottom: 16,
+    gap: 16,
+    paddingBottom: 12,
+
+    paddingHorizontal: 16,
   },
 });

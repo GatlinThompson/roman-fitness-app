@@ -1,3 +1,4 @@
+import BottomSpace from "@/components/layout/bottom-space";
 import { color } from "@/styles/color";
 import React from "react";
 import { StyleSheet, View } from "react-native";
@@ -25,7 +26,7 @@ function WorkoutDay({ date, workout, loading }: WorkoutDayProps) {
         style={{
           flexDirection: "row",
           justifyContent: "space-between",
-          marginBottom: 16,
+          marginBottom: 4,
         }}
       >
         <SelectedDate date={date} />
@@ -40,6 +41,7 @@ function WorkoutDay({ date, workout, loading }: WorkoutDayProps) {
         loading={loading}
         dateKey={date}
       />
+      <BottomSpace />
     </View>
   );
 }
@@ -59,9 +61,9 @@ const styles = StyleSheet.create({
     height: "100%",
   },
   text: {
-    fontSize: 18,
+    fontSize: 38,
     fontWeight: "bold",
-    marginBottom: 8,
+
     color: color.foreground.color,
   },
 });
