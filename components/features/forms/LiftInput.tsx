@@ -87,7 +87,7 @@ function LiftInput({ sequence, initialData, onDataChange }: Props) {
   }, []);
 
   return (
-    <View>
+    <View style={styles.container}>
       {/* TextInput fields for main lift */}
       <View style={styles.inputGroup}>
         <Text style={styles.label}>Exercise</Text>
@@ -188,6 +188,9 @@ function LiftInput({ sequence, initialData, onDataChange }: Props) {
 export default memo(LiftInput);
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
   inputGroup: {
     marginBottom: 12,
   },

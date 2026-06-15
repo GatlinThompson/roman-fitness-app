@@ -1,17 +1,9 @@
 import Spinner from "@/components/ui/spinner";
 import { createWorkout, updateWorkout } from "@/lib/supabase/queries";
-import { color } from "@/styles/color";
 import { useQueryClient } from "@tanstack/react-query";
 import { router } from "expo-router";
 import { useCallback, useMemo, useState } from "react";
-import {
-  Alert,
-  Pressable,
-  ScrollView,
-  StyleSheet,
-  Text,
-  View,
-} from "react-native";
+import { Alert, Pressable, StyleSheet, Text, View } from "react-native";
 import LiftDateInput from "./LiftDateInput";
 import LiftInputGroup from "./LiftInputGroup";
 
@@ -54,7 +46,6 @@ export default function LiftForm({
     try {
       if (isEditing && workoutId) {
         await updateWorkout(workoutId, lifts, date, removedLifts);
-        // Invalidate the query to refetch updated data
         queryClient.invalidateQueries({
           queryKey: ["workout", workoutId, date],
         });
@@ -73,16 +64,23 @@ export default function LiftForm({
   }, [isEditing, workoutId, lifts, date, removedLifts, queryClient]);
 
   return (
-    <ScrollView style={styles.container}>
-      <View style={styles.form}>
+    <View style={styles.container}>
+      {/* Date picker — fixed above the scrollable list */}
+      <View style={styles.dateSection}>
         <LiftDateInput initialDate={initialDate} onDateChange={setDate} />
+      </View>
 
+      {/* Scrollable lift list with fade edges */}
+      <View style={styles.scrollSection}>
         <LiftInputGroup
           initialLifts={initialLifts}
           onLiftsChange={setLifts}
           onRemovedLiftsChange={setRemovedLifts}
         />
+      </View>
 
+      {/* Submit button pinned to the bottom */}
+      <View style={styles.buttonContainer}>
         <Pressable
           style={[styles.button, !canSubmit && styles.buttonDisabled]}
           onPress={handleSubmit}
@@ -97,7 +95,7 @@ export default function LiftForm({
           )}
         </Pressable>
       </View>
-    </ScrollView>
+    </View>
   );
 }
 
@@ -105,23 +103,39 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  form: {
-    gap: 24,
-    paddingHorizontal: 12,
-    paddingBottom: 40,
+  dateSection: {
+    paddingHorizontal: 8,
+    paddingBottom: 8,
+  },
+  scrollSection: {
+    flex: 1,
+    position: "relative",
+  },
+  scroll: {
+    flex: 1,
+  },
+  scrollContent: {
+    // Enough room so the last card isn't hidden behind button + fade
+    paddingBottom: 120,
+  },
+
+  buttonContainer: {
+    position: "absolute",
+    bottom: 64,
+    left: 8,
+    right: 8,
   },
   button: {
-    backgroundColor: color.primary.color,
-    borderRadius: 8,
-    paddingVertical: 12,
-    paddingHorizontal: 16,
+    backgroundColor: "#0F0E0E",
+    borderRadius: 4,
+    paddingVertical: 14,
     alignItems: "center",
     justifyContent: "center",
-    marginHorizontal: 8,
-    marginBottom: 10,
+    borderWidth: 1,
+    borderColor: "#454444",
   },
   buttonDisabled: {
-    opacity: 0.6,
+    opacity: 0.4,
   },
   buttonText: {
     color: "white",

@@ -1,6 +1,8 @@
-import { useState } from "react";
-import { StyleSheet, View, Text } from "react-native";
+import Divider from "@/components/ui/divider";
+import { font } from "@/styles/fonts";
 import { getDate, getWeekDay } from "@/utils/get-date";
+import { useState } from "react";
+import { StyleSheet, Text, View } from "react-native";
 
 type Props = {
   initialDate?: string;
@@ -33,37 +35,30 @@ export default function LiftDateInput({ initialDate, onDateChange }: Props) {
         <Text style={styles.weekDay}>{weekDay}</Text>
         <Text style={styles.date}>{displayDate}</Text>
       </View>
+      <Divider />
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 16,
-    marginHorizontal: 8,
-    paddingVertical: 16,
-    paddingHorizontal: 12,
-    backgroundColor: "rgba(0, 0, 0, 0.3)",
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: "rgba(255, 255, 255, 0.1)",
-  },
+  container: {},
   dateDisplay: {
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
+    marginBottom: 16,
   },
   weekDay: {
     color: "rgba(255, 255, 255, 0.7)",
     fontSize: 14,
-    fontWeight: "500",
+    fontWeight: font.montserratRegular.fontWeight,
+    fontFamily: font.montserratRegular.fontFamily,
   },
   date: {
     color: "white",
-    fontSize: 18,
-    fontWeight: "600",
-    marginTop: 4,
+    fontSize: 20,
+    fontWeight: font.montserratSemiBold.fontWeight,
+    fontFamily: font.montserratSemiBold.fontFamily,
+    marginTop: -2,
   },
 });

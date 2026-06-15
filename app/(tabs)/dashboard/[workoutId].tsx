@@ -1,6 +1,7 @@
 import EditWorkout from "@/components/features/workout/forms/edit-workout";
 import BackButton from "@/components/layout/back-button";
 import NestedContainerView from "@/components/layout/nested-container-view";
+import { font } from "@/styles/fonts";
 import { useLocalSearchParams } from "expo-router";
 import { StyleSheet, Text, View } from "react-native";
 
@@ -30,12 +31,12 @@ export default function WorkoutDetails() {
 const styles = StyleSheet.create({
   container: {
     position: "relative",
-    marginBottom: 24,
+    marginBottom: 12,
   },
   title: {
     color: "white",
-    fontSize: 24,
-    fontWeight: "bold",
+    fontSize: 28,
+    fontWeight: font.montserratBold.fontWeight,
     flex: 1,
     textAlign: "center",
     position: "absolute",
@@ -43,5 +44,6 @@ const styles = StyleSheet.create({
     right: 0,
     width: "100%",
     zIndex: -1,
+    fontFamily: font.montserratBold.fontFamily,
   },
 });

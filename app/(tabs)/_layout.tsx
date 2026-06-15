@@ -34,6 +34,7 @@ export default function TabLayout() {
         },
         tabBarButton: HapticTab,
         tabBarStyle: tabBarStyles,
+        tabBarShowLabel: false,
       }}
     >
       <Tabs.Screen
@@ -43,7 +44,7 @@ export default function TabLayout() {
           tabBarIcon: ({ color }) => (
             <MaterialCommunityIcons
               name="weight-lifter"
-              size={24}
+              size={28}
               color={color}
             />
           ),
@@ -55,7 +56,7 @@ export default function TabLayout() {
           title: "Dashboard",
           popToTopOnBlur: true,
           tabBarIcon: ({ color }) => (
-            <MaterialIcons name="dashboard" size={24} color={color} />
+            <MaterialIcons name="dashboard" size={28} color={color} />
           ),
         }}
       />
@@ -64,7 +65,7 @@ export default function TabLayout() {
         options={{
           title: "Phases",
           tabBarIcon: ({ color }) => (
-            <MaterialIcons name="timeline" size={24} color={color} />
+            <MaterialIcons name="timeline" size={28} color={color} />
           ),
         }}
       />

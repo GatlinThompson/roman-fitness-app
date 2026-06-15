@@ -28,6 +28,12 @@ export default function DashboardLayout() {
             presentation: "modal",
           }}
         />
+        <Stack.Screen
+          name="edit_lift"
+          options={{
+            headerShown: false,
+          }}
+        />
       </Stack>
     </>
   );
