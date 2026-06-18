@@ -1,3 +1,4 @@
+import { font } from "@/styles/fonts";
 import { memo, useCallback, useEffect, useMemo, useState } from "react";
 import { StyleSheet, Switch, Text, TextInput, View } from "react-native";
 
@@ -101,7 +102,7 @@ function LiftInput({ sequence, initialData, onDataChange }: Props) {
       </View>
 
       <View style={styles.inputRow}>
-        <View style={[styles.inputGroup, { flex: 1 }]}>
+        <View style={[styles.inputGroup, { flex: 2 }]}>
           <Text style={styles.label}>Reps</Text>
           <TextInput
             style={styles.input}
@@ -132,49 +133,48 @@ function LiftInput({ sequence, initialData, onDataChange }: Props) {
           value={superSetEnabled}
           onValueChange={setSuperSetEnabled}
           trackColor={{
-            false: "rgba(255, 255, 255, 0.2)",
-            true: "rgba(100, 150, 255, 0.5)",
+            false: "#622d2d",
+            true: "#E01C1C",
           }}
-          thumbColor={superSetEnabled ? "#64B5FF" : "rgba(255, 255, 255, 0.5)"}
+          style={{ height: 40, width: 70, transform: [{ scaleX: 1.3 }, { scaleY: 1.3 }] }}
+          thumbColor={superSetEnabled ? "#FFFFFF" : "rgba(255, 255, 255, 0.5)"}
         />
       </View>
 
       {/* Superset fields */}
       {superSetEnabled && hasSuperSet && liftObject.superSet && (
         <View style={styles.supersetContainer}>
-          <Text style={styles.supersetTitle}>Superset Lift</Text>
-
           <View style={styles.inputGroup}>
             <Text style={styles.label}>Superset Exercise</Text>
             <TextInput
               style={styles.input}
               value={liftObject.superSet!.exercise}
               onChangeText={(value) => updateSuper("exercise", value)}
-              placeholder="Exercise Name"
+              placeholder="Superset Exercise Name"
               placeholderTextColor="rgba(255, 255, 255, 0.5)"
             />
           </View>
 
           <View style={styles.inputRow}>
-            <View style={[styles.inputGroup, { flex: 1 }]}>
-              <Text style={styles.label}>Superset Reps</Text>
+            <View style={[styles.inputGroup, { flex: 2 }]}>
+              <Text style={styles.label}>Reps</Text>
               <TextInput
                 style={styles.input}
                 value={liftObject.superSet!.reps}
                 onChangeText={(value) => updateSuper("reps", value)}
-                placeholder="Superset Reps"
+                placeholder="Reps"
                 placeholderTextColor="rgba(255, 255, 255, 0.5)"
                 keyboardType="numbers-and-punctuation"
               />
             </View>
 
             <View style={[styles.inputGroup, { flex: 1 }]}>
-              <Text style={styles.label}>Superset Tempo</Text>
+              <Text style={styles.label}>Tempo</Text>
               <TextInput
                 style={styles.input}
                 value={liftObject.superSet!.tempo}
                 onChangeText={(value) => updateSuper("tempo", value)}
-                placeholder="Superset Tempo"
+                placeholder="Tempo"
                 placeholderTextColor="rgba(255, 255, 255, 0.5)"
               />
             </View>
@@ -201,19 +201,22 @@ const styles = StyleSheet.create({
   },
   label: {
     color: "white",
-    fontSize: 14,
-    fontWeight: "500",
+    fontSize: 18,
     marginBottom: 4,
+    fontFamily: font.montserratRegular.fontFamily,
+    fontWeight: font.montserratRegular.fontWeight,
   },
   input: {
-    backgroundColor: "rgba(0, 0, 0, 0.3)",
+    backgroundColor: "#262525",
     borderWidth: 1,
-    borderColor: "rgba(255, 255, 255, 0.2)",
-    borderRadius: 6,
+    borderColor: "#454444",
+    borderRadius: 4,
     paddingHorizontal: 12,
     paddingVertical: 10,
     color: "white",
     fontSize: 14,
+    fontWeight: font.montserratRegular.fontWeight,
+    fontFamily: font.montserratRegular.fontFamily,
   },
   toggleContainer: {
     flexDirection: "row",
@@ -228,10 +231,20 @@ const styles = StyleSheet.create({
     borderTopWidth: 1,
     borderTopColor: "rgba(255, 255, 255, 0.1)",
   },
-  supersetTitle: {
-    fontSize: 16,
-    fontWeight: "600",
-    color: "white",
+  supersetBadge: {
+    alignSelf: "flex-start",
+    backgroundColor: "rgba(100, 150, 255, 0.2)",
+    borderWidth: 1,
+    borderColor: "rgba(100, 150, 255, 0.5)",
+    borderRadius: 4,
+    paddingHorizontal: 6,
+    paddingVertical: 2,
     marginBottom: 12,
+  },
+  supersetBadgeText: {
+    color: "rgba(150, 180, 255, 1)",
+    fontSize: 11,
+    fontWeight: font.montserratSemiBold.fontWeight,
+    fontFamily: font.montserratSemiBold.fontFamily,
   },
 });

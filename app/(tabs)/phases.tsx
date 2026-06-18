@@ -15,6 +15,7 @@ import {
 } from "react-native";
 
 import ContainerView from "@/components/layout/container-view";
+import { font } from "@/styles/fonts";
 
 function formatDate(iso: string) {
   return new Intl.DateTimeFormat("en-US", {
@@ -183,11 +184,14 @@ const styles = StyleSheet.create({
   header: {
     paddingHorizontal: 8,
     marginBottom: 16,
+    paddingTop: 52,
   },
   title: {
     color: "white",
-    fontSize: 24,
-    fontWeight: "bold",
+    fontSize: 28,
+    textAlign: "center",
+    fontWeight: font.montserratBold.fontWeight,
+    fontFamily: font.montserratBold.fontFamily,
   },
   loader: {
     marginTop: 40,
@@ -199,14 +203,16 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
   list: {
-    paddingHorizontal: 8,
-    gap: 12,
+    paddingHorizontal: 20,
+    gap: 14,
   },
   card: {
-    backgroundColor: "#1e1e1e",
-    borderRadius: 12,
+    backgroundColor: "#262525",
+    borderRadius: 8,
     padding: 16,
     gap: 8,
+    borderWidth: 1,
+    borderColor: "#454444",
   },
   cardHeader: {
     flexDirection: "row",
@@ -215,16 +221,19 @@ const styles = StyleSheet.create({
   },
   phaseLabel: {
     color: "white",
-    fontSize: 16,
-    fontWeight: "600",
+    fontSize: 18,
+    fontWeight: font.montserratBold.fontWeight,
+    fontFamily: font.montserratBold.fontFamily,
   },
   percentage: {
     color: "#a3a3a3",
     fontSize: 14,
   },
   dates: {
-    color: "#a3a3a3",
-    fontSize: 13,
+    color: "#949191",
+    fontSize: 16,
+    fontFamily: font.montserratRegular.fontFamily,
+    fontWeight: font.montserratRegular.fontWeight,
   },
   actions: {
     flexDirection: "row",
@@ -233,31 +242,33 @@ const styles = StyleSheet.create({
     justifyContent: "flex-end",
   },
   btn: {
-    borderRadius: 8,
+    borderRadius: 4,
     paddingVertical: 8,
     paddingHorizontal: 16,
     alignItems: "center",
     minWidth: 90,
   },
   btnPrimary: {
-    backgroundColor: "#3b82f6",
+    backgroundColor: "#c21b1b",
   },
   btnOutline: {
-    backgroundColor: "transparent",
+    backgroundColor: "#0F0E0E",
     borderWidth: 1,
-    borderColor: "#3b82f6",
+    borderColor: "#aeaeae",
   },
   btnDisabled: {
     opacity: 0.5,
   },
   btnText: {
     color: "white",
-    fontSize: 14,
-    fontWeight: "600",
+    fontSize: 16,
+    fontWeight: font.montserratSemiBold.fontWeight,
+    fontFamily: font.montserratSemiBold.fontFamily,
   },
   btnTextOutline: {
-    color: "#3b82f6",
-    fontSize: 14,
-    fontWeight: "600",
+    color: "#ffffff",
+    fontSize: 16,
+    fontWeight: font.montserratSemiBold.fontWeight,
+    fontFamily: font.montserratSemiBold.fontFamily,
   },
 });

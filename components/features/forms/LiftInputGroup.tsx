@@ -495,23 +495,25 @@ function LiftInputGroup({
                             </View>
                             {data.superSet && (
                               <View style={styles.supersetSection}>
-                                <View style={styles.supersetBadge}>
-                                  <Text style={styles.supersetBadgeText}>SUPERSET</Text>
-                                </View>
                                 <Text style={styles.exerciseName}>
-                                  {data.superSet.exercise || "Superset Exercise"}
+                                  {data.superSet.exercise ||
+                                    "Superset Exercise"}
                                 </Text>
                                 <View style={styles.metaRow}>
                                   <Text style={styles.metaText}>
                                     Reps:{" "}
                                     <Text style={styles.metaValue}>
-                                      {data.superSet.reps ? data.superSet.reps : "-"}
+                                      {data.superSet.reps
+                                        ? data.superSet.reps
+                                        : "-"}
                                     </Text>
                                   </Text>
                                   <Text style={styles.metaText}>
                                     Tempo:{" "}
                                     <Text style={styles.metaValue}>
-                                      {data.superSet.tempo ? data.superSet.tempo : "-"}
+                                      {data.superSet.tempo
+                                        ? data.superSet.tempo
+                                        : "-"}
                                     </Text>
                                   </Text>
                                 </View>

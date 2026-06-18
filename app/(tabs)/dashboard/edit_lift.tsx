@@ -1,14 +1,19 @@
 import LiftInput from "@/components/features/forms/LiftInput";
 import BackButton from "@/components/layout/back-button";
 import NestedContainerView from "@/components/layout/nested-container-view";
-import {
-  getLiftEditContext,
-  setPendingLiftEdit,
-} from "@/lib/pendingLiftEdit";
+import { getLiftEditContext, setPendingLiftEdit } from "@/lib/pendingLiftEdit";
 import { font } from "@/styles/fonts";
 import { router } from "expo-router";
 import { useCallback, useMemo, useRef } from "react";
-import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
+import {
+  KeyboardAvoidingView,
+  Platform,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 
 export default function EditLiftScreen() {
   // Read context set by LiftInputGroup before navigating here — avoids URL param encoding issues
@@ -35,24 +40,62 @@ export default function EditLiftScreen() {
       <View style={styles.header}>
         <BackButton />
         <Text style={styles.title}>{isNew ? "New Lift" : "Edit Lift"}</Text>
-        <Pressable style={styles.saveButton} onPress={handleSave}>
-          <Text style={styles.saveButtonText}>Save</Text>
-        </Pressable>
       </View>
-      <ScrollView style={styles.scroll} keyboardShouldPersistTaps="handled">
-        <View style={styles.formContainer}>
-          <LiftInput
-            sequence={index + 1}
-            initialData={initialLiftData ? { lift: initialLiftData } : undefined}
-            onDataChange={handleDataChange}
-          />
-        </View>
-      </ScrollView>
+      <KeyboardAvoidingView
+        style={{ flex: 1 }}
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        keyboardVerticalOffset={Platform.OS === "ios" ? 20 : 0}
+      >
+        <ScrollView
+          style={styles.scroll}
+          contentContainerStyle={styles.scrollContent}
+          keyboardShouldPersistTaps="handled"
+          showsVerticalScrollIndicator={false}
+        >
+          <View style={styles.formContainer}>
+            <LiftInput
+              sequence={index + 1}
+              initialData={
+                initialLiftData ? { lift: initialLiftData } : undefined
+              }
+              onDataChange={handleDataChange}
+            />
+          </View>
+
+          <View style={styles.buttonContainer}>
+            <Pressable style={styles.button} onPress={handleSave}>
+              <Text style={styles.buttonText}>
+                {isNew ? "Add Lift" : "Update Lift"}
+              </Text>
+            </Pressable>
+          </View>
+        </ScrollView>
+      </KeyboardAvoidingView>
     </NestedContainerView>
   );
 }
 
 const styles = StyleSheet.create({
+  buttonContainer: {
+    // position: "absolute",
+    // bottom: 64,
+    // left: 8,
+    // right: 8,
+  },
+  button: {
+    backgroundColor: "#0F0E0E",
+    borderRadius: 4,
+    paddingVertical: 14,
+    alignItems: "center",
+    justifyContent: "center",
+    borderWidth: 1,
+    borderColor: "#454444",
+  },
+  buttonText: {
+    color: "white",
+    fontSize: 16,
+    fontWeight: "600",
+  },
   header: {
     flexDirection: "row",
     alignItems: "center",
@@ -74,10 +117,11 @@ const styles = StyleSheet.create({
     zIndex: -1,
   },
   saveButton: {
+    backgroundColor: "#b41212",
     marginLeft: "auto",
     paddingVertical: 8,
     paddingHorizontal: 16,
-    backgroundColor: "#c42222",
+
     borderRadius: 8,
   },
   saveButtonText: {
@@ -89,8 +133,11 @@ const styles = StyleSheet.create({
   scroll: {
     flex: 1,
   },
+  scrollContent: {
+    paddingBottom: 80,
+  },
   formContainer: {
     paddingHorizontal: 16,
-    paddingBottom: 40,
+    paddingBottom: 24,
   },
 });

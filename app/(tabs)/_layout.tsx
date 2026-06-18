@@ -3,10 +3,9 @@ import React from "react";
 import { ViewStyle } from "react-native";
 
 import { HapticTab } from "@/components/haptic-tab";
+import { DashboardIcon, PhaseIcon, WorkoutIcon } from "@/components/tab-icons";
 import { Colors } from "@/constants/theme";
 import { useColorScheme } from "@/hooks/use-color-scheme";
-import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
-import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 
 export const tabBarStyles: ViewStyle = {
   position: "absolute",
@@ -41,13 +40,7 @@ export default function TabLayout() {
         name="index"
         options={{
           title: "Workout",
-          tabBarIcon: ({ color }) => (
-            <MaterialCommunityIcons
-              name="weight-lifter"
-              size={28}
-              color={color}
-            />
-          ),
+          tabBarIcon: ({ color }) => <WorkoutIcon color={color} />,
         }}
       />
       <Tabs.Screen
@@ -55,18 +48,14 @@ export default function TabLayout() {
         options={{
           title: "Dashboard",
           popToTopOnBlur: true,
-          tabBarIcon: ({ color }) => (
-            <MaterialIcons name="dashboard" size={28} color={color} />
-          ),
+          tabBarIcon: ({ color }) => <DashboardIcon color={color} />,
         }}
       />
       <Tabs.Screen
         name="phases"
         options={{
           title: "Phases",
-          tabBarIcon: ({ color }) => (
-            <MaterialIcons name="timeline" size={28} color={color} />
-          ),
+          tabBarIcon: ({ color }) => <PhaseIcon color={color} />,
         }}
       />
     </Tabs>

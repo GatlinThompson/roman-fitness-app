@@ -26,7 +26,7 @@ export default function SuperSetRow({
       <View
         style={{ display: "flex", flexDirection: "column", flex: 1, gap: 8 }}
       >
-        <LiftComponent lift={lift} />
+        <LiftComponent lift={lift} superset={true} />
         <LiftComponent lift={superset} superset={true} />
       </View>
     </View>
