@@ -15,6 +15,7 @@ import {
 } from "react-native";
 
 import ContainerView from "@/components/layout/container-view";
+import { useAuth } from "@/contexts/auth-context";
 import { font } from "@/styles/fonts";
 
 function formatDate(iso: string) {
@@ -38,6 +39,7 @@ function PhaseCard({
   onReduce,
   extendingId,
   reducingId,
+  isAdmin,
 }: {
   item: PhaseEntry;
   index: number;
@@ -45,6 +47,7 @@ function PhaseCard({
   onReduce: (id: string) => void;
   extendingId: string | null;
   reducingId: string | null;
+  isAdmin: boolean;
 }) {
   const isFirstPhase = index === 0;
   const canReduce = durationIsMoreThanAWeek(item.start_date, item.end_date);
@@ -63,7 +66,7 @@ function PhaseCard({
       <Text style={styles.dates}>
         {formatDate(item.start_date)} — {formatDate(item.end_date)}
       </Text>
-      {isFirstPhase && (
+      {isFirstPhase && isAdmin && (
         <View style={styles.actions}>
           {canReduce && (
             <TouchableOpacity
@@ -104,6 +107,7 @@ function PhaseCard({
 }
 
 export default function Phases() {
+  const { signOut, isAdmin } = useAuth();
   const [phases, setPhases] = useState<PhaseEntry[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -154,6 +158,9 @@ export default function Phases() {
     <ContainerView>
       <View style={styles.header}>
         <Text style={styles.title}>Phase Management</Text>
+        <TouchableOpacity onPress={signOut} style={styles.signOutBtn}>
+          <Text style={styles.signOutText}>Sign Out</Text>
+        </TouchableOpacity>
       </View>
       {loading ? (
         <ActivityIndicator size="large" color="#fff" style={styles.loader} />
@@ -172,6 +179,7 @@ export default function Phases() {
               onReduce={handleReduce}
               extendingId={extendingId}
               reducingId={reducingId}
+              isAdmin={isAdmin}
             />
           )}
         />
@@ -185,6 +193,20 @@ const styles = StyleSheet.create({
     paddingHorizontal: 8,
     marginBottom: 16,
     paddingTop: 52,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  signOutBtn: {
+    position: "absolute",
+    right: 8,
+    bottom: 0,
+  },
+  signOutText: {
+    color: "#8d8d8d",
+    fontSize: 13,
+    fontFamily: font.montserratMedium.fontFamily,
+    fontWeight: font.montserratMedium.fontWeight,
   },
   title: {
     color: "white",

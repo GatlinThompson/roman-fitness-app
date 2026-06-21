@@ -12,6 +12,7 @@ type WorkoutDayProps = {
   date: string;
   workout: { workout: (Lift | SuperSet)[]; id?: number } | undefined;
   loading?: boolean;
+  isAdmin: boolean;
 };
 
 /**
@@ -19,7 +20,7 @@ type WorkoutDayProps = {
  * Only re-renders when the date prop actually changes
  * This prevents unnecessary re-renders during carousel animations
  */
-function WorkoutDay({ date, workout, loading }: WorkoutDayProps) {
+function WorkoutDay({ date, workout, loading, isAdmin }: WorkoutDayProps) {
   return (
     <View style={styles.container}>
       <View
@@ -34,6 +35,7 @@ function WorkoutDay({ date, workout, loading }: WorkoutDayProps) {
           editMode={!!workout?.id}
           date={date}
           id={workout?.id}
+          isAdmin={isAdmin}
         />
       </View>
       <CalendarWorkout
@@ -51,7 +53,8 @@ export default React.memo(WorkoutDay, (prevProps, nextProps) => {
   return (
     prevProps.date === nextProps.date &&
     prevProps.workout === nextProps.workout &&
-    prevProps.loading === nextProps.loading
+    prevProps.loading === nextProps.loading &&
+    prevProps.isAdmin === nextProps.isAdmin
   );
 });
 

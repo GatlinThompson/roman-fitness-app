@@ -9,17 +9,19 @@ type CalendarWorkoutButtonProps = {
   editMode: boolean;
   date: string;
   id?: number;
+  isAdmin: boolean;
 };
 
 export default function CalendarWorkoutButton({
   editMode,
   date,
   id,
+  isAdmin,
 }: CalendarWorkoutButtonProps) {
   const isSunday = new Date(date + "T00:00:00").getDay() === 0;
 
-  if (isSunday) {
-    return null; // Don't render the button on Sundays
+  if (isSunday || !isAdmin) {
+    return null;
   }
 
   const linkHref: any = editMode

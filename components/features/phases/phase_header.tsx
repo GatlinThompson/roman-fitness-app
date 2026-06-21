@@ -30,8 +30,8 @@ export default function PhaseHeader() {
             <Text style={styles.redText}>1RPM</Text>
           </Text>
           <Text style={styles.grayText}>
-            Level-{phase?.phase.phase_number ? phase.phase.phase_number : "1"}{" "}
-            {phase?.phase.level ? phase.phase.level : "1"}
+            Level-
+            {phase?.phase.phase_number ? phase.phase.phase_number : "1"}
           </Text>
         </View>
       </View>

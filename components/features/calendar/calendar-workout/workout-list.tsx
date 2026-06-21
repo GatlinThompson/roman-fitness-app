@@ -1,3 +1,4 @@
+import { useIsAdmin } from "@/hooks/use-is-admin";
 import { supabase } from "@/lib/supabase/client";
 import {
   clearWorkoutAnimation,
@@ -51,6 +52,8 @@ type SwipeDirection = "next" | "prev";
  * - Optimized PanResponder with animation locks
  */
 export default function WorkoutList() {
+  const { isAdmin } = useIsAdmin();
+
   // Redux selectors with proper typing
   const {
     selectedDate,
@@ -342,10 +345,11 @@ export default function WorkoutList() {
           date={prevDate}
           workout={prevWorkout}
           loading={prevLoading}
+          isAdmin={isAdmin}
         />
       </>
     ),
-    [prevDate, prevWorkout, prevLoading],
+    [prevDate, prevWorkout, prevLoading, isAdmin],
   );
   const memoizedSelectedDay = useMemo(
     () => (
@@ -354,10 +358,11 @@ export default function WorkoutList() {
           date={selectedDate}
           workout={selectedWorkout}
           loading={selectedLoading}
+          isAdmin={isAdmin}
         />
       </>
     ),
-    [selectedDate, selectedWorkout, selectedLoading],
+    [selectedDate, selectedWorkout, selectedLoading, isAdmin],
   );
   const memoizedNextDay = useMemo(
     () => (
@@ -366,10 +371,11 @@ export default function WorkoutList() {
           date={nextDate}
           workout={nextWorkout}
           loading={nextLoading}
+          isAdmin={isAdmin}
         />
       </>
     ),
-    [nextDate, nextWorkout, nextLoading],
+    [nextDate, nextWorkout, nextLoading, isAdmin],
   );
 
   return (
