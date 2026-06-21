@@ -40,6 +40,21 @@ export function DashboardIcon({ color, size = 28 }: IconProps) {
   );
 }
 
+export function ProfileIcon({ color, size = 28 }: IconProps) {
+  return (
+    <Svg width={size} height={size} viewBox="0 0 28 28" fill="none">
+      <Path
+        d="M14 14C16.7614 14 19 11.7614 19 9C19 6.23858 16.7614 4 14 4C11.2386 4 9 6.23858 9 9C9 11.7614 11.2386 14 14 14Z"
+        fill={color}
+      />
+      <Path
+        d="M14 16C8.47715 16 4 19.134 4 23V24H24V23C24 19.134 19.5228 16 14 16Z"
+        fill={color}
+      />
+    </Svg>
+  );
+}
+
 export function PhaseIcon({ color, size = 28 }: IconProps) {
   return (
     <Svg width={size} height={size} viewBox="0 0 28 28" fill="none">

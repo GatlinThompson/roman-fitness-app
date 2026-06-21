@@ -3,7 +3,7 @@ import React from "react";
 import { ViewStyle } from "react-native";
 
 import { HapticTab } from "@/components/haptic-tab";
-import { DashboardIcon, PhaseIcon, WorkoutIcon } from "@/components/tab-icons";
+import { DashboardIcon, PhaseIcon, ProfileIcon, WorkoutIcon } from "@/components/tab-icons";
 import { Colors } from "@/constants/theme";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 
@@ -56,6 +56,13 @@ export default function TabLayout() {
         options={{
           title: "Phases",
           tabBarIcon: ({ color }) => <PhaseIcon color={color} />,
+        }}
+      />
+      <Tabs.Screen
+        name="profile"
+        options={{
+          title: "Profile",
+          tabBarIcon: ({ color }) => <ProfileIcon color={color} />,
         }}
       />
     </Tabs>

@@ -107,7 +107,7 @@ function PhaseCard({
 }
 
 export default function Phases() {
-  const { signOut, isAdmin } = useAuth();
+  const { isAdmin } = useAuth();
   const [phases, setPhases] = useState<PhaseEntry[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -158,9 +158,6 @@ export default function Phases() {
     <ContainerView>
       <View style={styles.header}>
         <Text style={styles.title}>Phase Management</Text>
-        <TouchableOpacity onPress={signOut} style={styles.signOutBtn}>
-          <Text style={styles.signOutText}>Sign Out</Text>
-        </TouchableOpacity>
       </View>
       {loading ? (
         <ActivityIndicator size="large" color="#fff" style={styles.loader} />
@@ -196,17 +193,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-  },
-  signOutBtn: {
-    position: "absolute",
-    right: 8,
-    bottom: 0,
-  },
-  signOutText: {
-    color: "#8d8d8d",
-    fontSize: 13,
-    fontFamily: font.montserratMedium.fontFamily,
-    fontWeight: font.montserratMedium.fontWeight,
   },
   title: {
     color: "white",
