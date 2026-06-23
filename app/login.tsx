@@ -79,7 +79,6 @@ export default function LoginScreen() {
                 style={styles.logo}
                 resizeMode="contain"
               />
-
               <Text style={styles.subtitle}>
                 {mode === "signin"
                   ? "Sign in to continue"
@@ -186,12 +185,6 @@ const styles = StyleSheet.create({
   logo: {
     width: 200,
     height: 80,
-  },
-  appName: {
-    ...font.montserratBold,
-    fontSize: 36,
-    color: "#c42222",
-    letterSpacing: 6,
   },
   subtitle: {
     ...font.montserratMedium,

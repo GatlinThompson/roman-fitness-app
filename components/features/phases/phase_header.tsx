@@ -31,7 +31,8 @@ export default function PhaseHeader() {
           </Text>
           <Text style={styles.grayText}>
             Level-
-            {phase?.phase.phase_number ? phase.phase.phase_number : "1"}
+            {phase?.phase.phase_number ? phase.phase.phase_number : "1"}{" "}
+            {phase?.phase.level ? phase.phase.level : "Endurance"}
           </Text>
         </View>
       </View>
